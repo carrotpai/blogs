@@ -1,0 +1,40 @@
+@use "sass:list";
+
+@mixin workSansLight($font-size, $line-height) {
+    font: 300 font($font-size, $line-height) "Work Sans";
+    @media screen and (max-width: 768px) {
+        font: 300 font($font-size - 2px, $line-height) "Work Sans";
+    }
+}
+
+@mixin workSansRegular($font-size, $line-height) {
+    font: 400 font($font-size, $line-height) "Work Sans";
+    @media screen and (max-width: 768px) {
+        font: 400 font($font-size - 2px, $line-height) "Work Sans";
+    }
+}
+
+@mixin workSansMedium($font-size, $line-height) {
+    font: 500 font($font-size, $line-height) "Work Sans";
+    @media screen and (max-width: 768px) {
+        font: 500 font($font-size - 2px, $line-height) "Work Sans";
+    }
+}
+
+@mixin workSansSemibold($font-size, $line-height) {
+    font: 600 font($font-size, $line-height) "Work Sans";
+    @media screen and (max-width: 768px) {
+        font: 600 font($font-size - 2px, $line-height) "Work Sans";
+    }
+}
+
+@mixin workSansBold($font-size, $line-height) {
+    font: 700 font($font-size, $line-height) "Work Sans";
+    @media screen and (max-width: 768px) {
+        font: 700 font($font-size - 2px, $line-height) "Work Sans";
+    }
+}
+
+@function font($font-size, $line-height) {
+    @return list.slash($font-size, $line-height);
+}

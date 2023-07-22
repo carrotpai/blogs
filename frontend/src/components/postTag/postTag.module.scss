@@ -1,0 +1,60 @@
+@use "../../utils/fonts/fonts.scss";
+
+.postTag {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background-color: var(--color-blue-secondary);
+    &__text {
+        @include fonts.workSansMedium(14px, 1.4);
+        color: var(--text-color-blue);
+    }
+
+    &__button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #8198f9;
+        cursor: pointer;
+        border: none;
+        width: 18px;
+        height: 18px;
+        color: #ffffff;
+        border-radius: 50%;
+        &:hover {
+            opacity: 0.7;
+        }
+    }
+}
+
+.cross {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    position: relative;
+    width: 14px;
+    height: 14px;
+    &:before,
+    &:after {
+        content: "";
+        position: absolute;
+        top: calc((6px - 2px) / 2);
+        left: 2px;
+        right: 0;
+        height: 10px;
+        width: 2px;
+        background: #ffffff;
+        border-radius: 100px;
+    }
+
+    &:before {
+        transform: rotate(45deg);
+    }
+
+    &:after {
+        transform: rotate(-45deg);
+    }
+}

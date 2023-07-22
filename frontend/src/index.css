@@ -1,0 +1,64 @@
+@import './utils/variables.css';
+@import './utils/normalize.css';
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap');
+
+.ql-container {
+    font-family: "Work Sans", Arial, sans-serif;
+}
+
+.ql-disabled > .ql-editor {
+    padding: 0;
+}
+
+.ql-font-WorkSans {
+    font-family: "Work Sans", sans-serif;
+}
+
+.ql-font span[data-value="WorkSans"]::before {
+    font-family: "Work Sans";
+    content: "Work Sans" !important;
+  }
+
+  .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="12px"]::before {
+    content: '12px';
+    font-size: 12px !important;
+}
+
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="14px"]::before {
+    content: '14px';
+    font-size: 14px !important;
+}
+
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="16px"]::before {
+    content: '16px';
+    font-size: 16px !important;
+}
+
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="18px"]::before {
+    content: '18px';
+    font-size: 18px !important;
+}
+
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="24px"]::before {
+    content: '24px';
+    font-size: 24px !important;
+}
+
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="28px"]::before {
+    content: '28px';
+    font-size: 28px !important;
+}
+
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="32px"]::before {
+    content: '32px';
+    font-size: 32px !important;
+}
+
+.ql-snow .ql-picker.ql-size .ql-picker-label::before, .ql-snow .ql-picker.ql-size .ql-picker-item::before {
+    content: attr(data-value) !important;
+}
+
+.ql-editor > p:has(> img) {
+    display: flex;
+    justify-content: center;
+}

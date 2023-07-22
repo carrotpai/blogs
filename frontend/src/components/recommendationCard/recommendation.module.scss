@@ -1,0 +1,26 @@
+@use "../../utils/fonts/fonts.scss";
+.card {
+    width: 220px;
+    height: 468px;
+    color: var(--text-color-dark);
+
+    &__image {
+        width: 220px;
+        height: 320px;
+        border-radius: 12px;
+    }
+    &__title {
+        @include fonts.workSansSemibold(18px, 1.4);
+        width: 100%;
+        margin: 0;
+    }
+    &__author {
+        cursor: pointer;
+        width: 100%;
+        @include fonts.workSansMedium(14px, 1.4);
+        color: var(--text-color-gray);
+        &:hover {
+            opacity: 0.5;
+        }
+    }
+}

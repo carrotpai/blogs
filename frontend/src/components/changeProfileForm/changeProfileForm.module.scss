@@ -1,0 +1,93 @@
+@use "../../utils/fonts/fonts.scss";
+.form {
+    padding: 20px 0;
+    height: calc(100vh - 200px);
+    display: flex;
+    flex-flow: column nowrap;
+    overflow-y: scroll;
+    gap: 32px;
+
+    &__textInputs {
+        border-radius: 16px;
+        margin: 0 auto;
+        width: 600px;
+        display: flex;
+        flex-flow: column nowrap;
+    }
+
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background-color: #ededed;
+        border-radius: 12px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        border-radius: 12px;
+        background-color: rgba($color: #d2d2d2, $alpha: 1);
+    }
+}
+
+.userInfo {
+    margin-bottom: 32px;
+    & > div {
+        margin-top: 24px;
+    }
+}
+
+.changePassword {
+    display: flex;
+    flex-flow: column nowrap;
+
+    & > div {
+        margin-top: 24px;
+    }
+
+    margin-bottom: 40px;
+}
+
+.button {
+    width: 300px;
+    cursor: pointer;
+    color: #ffffff;
+    @include fonts.workSansSemibold(18px, 1.4);
+    border: none;
+    background-color: var(--color-blue-main);
+    border-radius: 8px;
+    height: 50px;
+    &:hover {
+        background-color: var(--color-blue-main-hover);
+        box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14),
+            0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+    }
+    transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.buttonWrapper {
+    margin: 0 auto;
+}
+
+.avatar {
+    margin: 0 auto;
+    width: 600px;
+}
+
+.info {
+    width: 600px;
+}
+
+.desc {
+    width: 600px;
+}
+
+.passwords {
+    &__current {
+    }
+
+    &__newPasswords {
+        display: flex;
+        justify-content: space-between;
+    }
+}

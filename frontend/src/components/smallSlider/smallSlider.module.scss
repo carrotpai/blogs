@@ -1,0 +1,6 @@
+@use "../../utils/fonts/fonts.scss";
+.recommendations {
+    &__title {
+        @include fonts.workSansSemibold(28px, 1.4);
+    }
+}

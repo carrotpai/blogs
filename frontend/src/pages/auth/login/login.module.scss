@@ -1,0 +1,24 @@
+@use "../../../utils/fonts/fonts.scss";
+.header {
+    margin-top: 22px;
+
+    &__title {
+        margin: 0;
+        @include fonts.workSansSemibold(18px, 1.5);
+        color: #262626;
+    }
+
+    &__info {
+        margin-top: 8px;
+        width: 300px;
+        margin: 0;
+        @include fonts.workSansRegular(16px, 1.5);
+        color: var(--text-color-gray);
+    }
+}
+
+.link {
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 60px;
+}

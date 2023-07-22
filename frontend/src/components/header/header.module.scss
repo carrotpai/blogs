@@ -1,0 +1,29 @@
+@use "../../utils/fonts/fonts.scss";
+.header {
+    padding: 32px 0;
+    width: 1216px;
+    display: flex;
+    display: flex;
+    justify-content: space-between;
+}
+
+.navgiation {
+    margin-left: 15%;
+    @include fonts.workSansRegular(16px, 1.4);
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    list-style: none;
+}
+
+.activeLink {
+    border-bottom: 2px solid var(--text-color-dark);
+}
+
+.link {
+    color: var(--text-color-dark);
+    text-decoration: none;
+    &:visited {
+        color: var(--text-color-dark);
+    }
+}

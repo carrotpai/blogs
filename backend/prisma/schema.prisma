@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  username     String    @unique
+  password     String
+  rating       Int       @default(0)
+  info         String?
+  description  String?
+  refreshToken String?
+  avatar       String?
+  role         Role      @default(USER)
+  posts        Post[]
+  comments     Comment[]
+}
+
+model Post {
+  id                Int                @id @default(autoincrement())
+  title             String
+  shortDescription  String
+  previewImageCover String
+  comments          Comment[]
+  author            User               @relation(fields: [authorId], references: [id])
+  authorId          Int
+  postContent       PostContent        @relation(fields: [postContentId], references: [id])
+  postContentId     Int                @unique
+  categories        CategoriesOnPost[]
+  rating            Int                @default(0)
+  createdAt         DateTime           @default(now())
+}
+
+model PostContent {
+  id      Int    @id @default(autoincrement())
+  content String @default("")
+  post    Post?
+}
+
+model CategoriesOnPost {
+  postId     Int
+  categoryId Int
+  post       Post     @relation(fields: [postId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  @@id([postId, categoryId])
+}
+
+model Category {
+  id               Int                @id @default(autoincrement())
+  name             String
+  CategoriesOnPost CategoriesOnPost[]
+}
+
+model Comment {
+  id       Int  @id @default(autoincrement())
+  post     Post @relation(fields: [postId], references: [id])
+  user     User @relation(fields: [authorId], references: [id])
+  postId   Int
+  authorId Int
+}
+
+enum Role {
+  USER
+  ADMIN
+}

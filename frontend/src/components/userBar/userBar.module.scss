@@ -1,0 +1,23 @@
+@use "../../utils/fonts/fonts.scss";
+.content {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+
+    &__text {
+        @include fonts.workSansMedium(16px, 1.4);
+        cursor: pointer;
+
+        &_default {
+            color: var(--text-color-dark);
+        }
+
+        &_secondary {
+            color: #696a75;
+        }
+    }
+}
+
+.avatar {
+    cursor: pointer;
+}

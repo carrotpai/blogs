@@ -1,0 +1,16 @@
+@use "../../utils/fonts/fonts.scss";
+.content {
+    padding: 0 12px;
+    width: 66px;
+    height: 43px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    border-radius: 50px;
+    border: 1px solid #cecece;
+}
+
+.text {
+    @include fonts.workSansMedium(16px, 2);
+    color: var(--text-color-dark);
+}

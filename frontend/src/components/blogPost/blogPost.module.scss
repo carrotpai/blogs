@@ -1,0 +1,27 @@
+@use "../../utils/fonts/fonts.scss";
+.title {
+    &__text {
+        @include fonts.workSansSemibold(36px, 1.2);
+        color: var(--text-color-dark);
+        margin: 0;
+    }
+    &__author {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-top: 12px;
+    }
+}
+
+.time {
+    @include fonts.workSansRegular(14px, 1.4);
+    color: var(--text-color-gray);
+}
+
+.content {
+    margin-top: 32px;
+}
+
+.buttons {
+    margin-top: 40px;
+}

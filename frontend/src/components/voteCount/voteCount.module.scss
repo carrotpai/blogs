@@ -1,0 +1,40 @@
+@use "../../utils/fonts/fonts.scss";
+.rating {
+    padding: 0 12px;
+    width: 86px;
+    height: 43px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 50px;
+    border: 1px solid #cecece;
+}
+
+.upvote,
+.downvote {
+    height: 32px;
+    width: 32px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-image: url("../../assets/arrow.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    &:hover {
+        background-image: url("../../assets/arrowFill.svg");
+        background-color: #e6eaec;
+    }
+}
+
+.downvote {
+    transform: rotate(180deg);
+}
+
+.text {
+    @include fonts.workSansMedium(16px, 2);
+    color: var(--text-color-dark);
+}

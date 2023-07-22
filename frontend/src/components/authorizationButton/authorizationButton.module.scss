@@ -1,0 +1,10 @@
+@use "../../utils/fonts/fonts.scss";
+.content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    &__text {
+        @include fonts.workSansRegular(16px, 1.4);
+        color: #262626;
+    }
+}
