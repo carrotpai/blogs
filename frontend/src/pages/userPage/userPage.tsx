@@ -1,7 +1,7 @@
-import React from "react";
-import UserBanner from "../../components/userBanner/userBanner";
-import { Outlet } from "react-router";
-import { Typography } from "@mui/material";
+import React from 'react';
+import UserBanner from '../../components/userBanner/userBanner';
+import { Outlet } from 'react-router';
+import { Typography } from '@mui/material';
 
 function UserPage() {
 	return (

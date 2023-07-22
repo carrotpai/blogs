@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-import styles from "./modalOverlay.module.scss";
+import styles from './modalOverlay.module.scss';
 
 function ModalOverlay({
 	handleCloseAction,
@@ -9,7 +9,7 @@ function ModalOverlay({
 }) {
 	return (
 		<div
-			aria-hidden='true'
+			aria-hidden="true"
 			className={styles.overlay}
 			onClick={handleCloseAction}
 		/>

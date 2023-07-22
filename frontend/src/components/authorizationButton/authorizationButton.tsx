@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import styles from "./authorizationButton.module.scss";
+import styles from './authorizationButton.module.scss';
 
-import loginIcon from "../../../img/login.svg";
-import logoutIcon from "../../../img/logout.svg";
+import loginIcon from '../../../img/login.svg';
+import logoutIcon from '../../../img/logout.svg';
 
 interface AuthStatusProps {
 	isAuth?: boolean;
@@ -12,10 +12,12 @@ interface AuthStatusProps {
 function AuthorizationButton({ isAuth }: AuthStatusProps) {
 	return (
 		<div className={styles.content}>
-			<p className={styles.content__text}>{isAuth ? "Logout" : "Login"}</p>
+			<p className={styles.content__text}>
+				{isAuth ? 'Logout' : 'Login'}
+			</p>
 			<img
 				src={isAuth ? loginIcon : logoutIcon}
-				alt='login logout icon'
+				alt="login logout icon"
 				width={30}
 				height={30}
 			/>

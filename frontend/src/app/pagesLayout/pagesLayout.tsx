@@ -1,8 +1,8 @@
-import React from "react";
-import { Outlet } from "react-router";
+import React from 'react';
+import { Outlet } from 'react-router';
 
-import styles from "./pagesLayout.module.scss";
-import Header from "../../components/header/header";
+import styles from './pagesLayout.module.scss';
+import Header from '../../components/header/header';
 
 function PagesLayout() {
 	return (

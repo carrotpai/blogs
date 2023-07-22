@@ -1,6 +1,6 @@
 function something() {}
 
-function testFunc(command: "up" | "down") {
+function testFunc(command: 'up' | 'down') {
 	return {
 		up: something,
 		down: something,

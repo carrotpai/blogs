@@ -1,14 +1,14 @@
-import React, { RefObject, useCallback, useRef } from "react";
-import { Divider, Typography, TypographyProps, styled } from "@mui/material";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useUserStore } from "../../store/store";
+import React, { RefObject, useCallback, useRef } from 'react';
+import { Divider, Typography, TypographyProps, styled } from '@mui/material';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { useUserStore } from '../../store/store';
 
-import ImageCropInput from "../imageCropInput/imageCropInput";
-import TextField from "../textField/responsiveTextField";
-import { axiosPrivate } from "../../api/axios";
+import ImageCropInput from '../imageCropInput/imageCropInput';
+import TextField from '../textField/responsiveTextField';
+import { axiosPrivate } from '../../api/axios';
 
-import styles from "./changeProfileForm.module.scss";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import styles from './changeProfileForm.module.scss';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface ProfileFormData {
 	username: string;
@@ -25,9 +25,9 @@ type ImageCropInputRef = {
 };
 
 const ModalTypography = styled(Typography)<TypographyProps>(({ theme }) => ({
-	marginBottom: "8px",
-	[theme.breakpoints.down("md")]: {
-		fontSize: "16px",
+	marginBottom: '8px',
+	[theme.breakpoints.down('md')]: {
+		fontSize: '16px',
 	},
 }));
 
@@ -36,14 +36,14 @@ function ChangeProfileForm() {
 	const queryClient = useQueryClient();
 	const { mutate } = useMutation({
 		mutationFn: async (formData: FormData) => {
-			return await axiosPrivate.patch("user/edit", formData, {
+			return await axiosPrivate.patch('user/edit', formData, {
 				headers: {
-					"Content-Type": "multipart/form-data",
+					'Content-Type': 'multipart/form-data',
 				},
 			});
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["user", user?.id] });
+			queryClient.invalidateQueries({ queryKey: ['user', user?.id] });
 		},
 	});
 
@@ -54,12 +54,12 @@ function ChangeProfileForm() {
 		formState: { errors },
 	} = useForm<ProfileFormData>({
 		defaultValues: {
-			username: user ? user.username : "",
-			info: user ? user.info : "",
-			description: user ? user.description : "",
-			password: "",
-			newPassword: "",
-			newPasswordRepeat: "",
+			username: user ? user.username : '',
+			info: user ? user.info : '',
+			description: user ? user.description : '',
+			password: '',
+			newPassword: '',
+			newPasswordRepeat: '',
 		},
 	});
 
@@ -69,10 +69,10 @@ function ChangeProfileForm() {
 				try {
 					imageCropInputRef.current?.toDataString((blob) => {
 						if (!blob) {
-							rej("Failed to create blob");
+							rej('Failed to create blob');
 							return;
 						}
-						data.append("avatar", blob);
+						data.append('avatar', blob);
 						res();
 					});
 				} catch (e) {
@@ -86,7 +86,7 @@ function ChangeProfileForm() {
 
 	const onSubmit: SubmitHandler<ProfileFormData> = async (data) => {
 		delete data.newPasswordRepeat;
-		let formData = new FormData();
+		const formData = new FormData();
 		await getImageCrop(formData);
 		(Object.keys(data) as [keyof ProfileFormData]).forEach((val) => {
 			const inputData = data[val];
@@ -98,9 +98,9 @@ function ChangeProfileForm() {
 	};
 	return (
 		<div>
-			<form action='submit' className={styles.form}>
+			<form action="submit" className={styles.form}>
 				<div className={styles.avatar}>
-					<Divider textAlign='left'>
+					<Divider textAlign="left">
 						<ModalTypography fontWeight={300}>
 							Choose image for avatar
 						</ModalTypography>
@@ -108,107 +108,118 @@ function ChangeProfileForm() {
 					<ImageCropInput ref={imageCropInputRef} />
 				</div>
 				<div className={styles.form__textInputs}>
-					<Divider textAlign='left'>
-						<ModalTypography fontWeight={300}>User info</ModalTypography>
+					<Divider textAlign="left">
+						<ModalTypography fontWeight={300}>
+							User info
+						</ModalTypography>
 					</Divider>
 					<div className={styles.userInfo}>
-						<div className='username'>
+						<div className="username">
 							<ModalTypography>New username:</ModalTypography>
 							<Controller
-								name='username'
+								name="username"
 								control={control}
 								render={({ field }) => (
 									<TextField
-										id='username'
-										variant='outlined'
-										label='Username'
+										id="username"
+										variant="outlined"
+										label="Username"
 										{...field}
 									/>
 								)}
 							/>
 						</div>
 						<div className={styles.info}>
-							<ModalTypography>Some info about you:</ModalTypography>
+							<ModalTypography>
+								Some info about you:
+							</ModalTypography>
 							<Controller
-								name='info'
+								name="info"
 								control={control}
 								render={({ field }) => (
 									<TextField
 										fullWidth
-										id='info'
+										id="info"
 										multiline
-										variant='outlined'
-										label='Info'
+										variant="outlined"
+										label="Info"
 										{...field}
 									/>
 								)}
 							/>
 						</div>
 						<div className={styles.desc}>
-							<ModalTypography sx={{ width: "400px" }}>
-								Here you can describe yourself and your expertise:
+							<ModalTypography sx={{ width: '400px' }}>
+								Here you can describe yourself and your
+								expertise:
 							</ModalTypography>
 							<Controller
-								name='description'
+								name="description"
 								control={control}
 								render={({ field }) => (
 									<TextField
-										id='description'
+										id="description"
 										fullWidth
 										multiline
 										rows={10}
-										label='Description...'
+										label="Description..."
 										{...field}
 									/>
 								)}
 							/>
 						</div>
 					</div>
-					<Divider textAlign='left'>
-						<ModalTypography fontWeight={300}>Change Password</ModalTypography>
+					<Divider textAlign="left">
+						<ModalTypography fontWeight={300}>
+							Change Password
+						</ModalTypography>
 					</Divider>
 					<div className={styles.changePassword}>
-						<div className='password'>
-							<ModalTypography>Your current password:</ModalTypography>
+						<div className="password">
+							<ModalTypography>
+								Your current password:
+							</ModalTypography>
 							<Controller
-								name='password'
+								name="password"
 								control={control}
 								render={({ field }) => (
 									<TextField
-										id='password'
-										variant='outlined'
-										label='Password'
-										sx={{ width: "280px" }}
+										id="password"
+										variant="outlined"
+										label="Password"
+										sx={{ width: '280px' }}
 										{...field}
 									/>
 								)}
 							/>
 						</div>
-						<div className={""}>
-							<ModalTypography>Enter your new password:</ModalTypography>
+						<div className={''}>
+							<ModalTypography>
+								Enter your new password:
+							</ModalTypography>
 							<div className={styles.passwords__newPasswords}>
 								<Controller
-									name='newPassword'
+									name="newPassword"
 									control={control}
 									render={({ field }) => (
 										<TextField
-											id='newPassword'
-											variant='outlined'
-											label='New password'
-											sx={{ width: "280px" }}
+											id="newPassword"
+											variant="outlined"
+											label="New password"
+											sx={{ width: '280px' }}
 											{...field}
 										/>
 									)}
 								/>
 								<Controller
-									name='newPasswordRepeat'
+									name="newPasswordRepeat"
 									control={control}
 									render={({ field }) => (
 										<TextField
-											id='newPasswordRepeat'
-											variant='outlined'
-											label='Repeat new password'
-											sx={{ width: "280px" }}
+											id="newPasswordRepeat"
+											variant="outlined"
+											label="Repeat new password"
+											sx={{ width: '280px' }}
 											{...field}
 										/>
 									)}
@@ -220,7 +231,7 @@ function ChangeProfileForm() {
 				<div className={styles.buttonWrapper}>
 					<button
 						onClick={handleSubmit(onSubmit)}
-						type='submit'
+						type="submit"
 						className={styles.button}
 					>
 						Apply

@@ -1,13 +1,13 @@
-import { MenuItem, TextField } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import React, { useRef, useState } from "react";
-import { type UseFormSetValue } from "react-hook-form";
-import { produce } from "immer";
+import { MenuItem, TextField } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
+import React, { useRef, useState } from 'react';
+import { type UseFormSetValue } from 'react-hook-form';
+import { produce } from 'immer';
 
-import { axios } from "../../api/axios";
+import { axios } from '../../api/axios';
 
-import styles from "./tagsInput.module.scss";
-import PostTag from "../postTag/postTag";
+import styles from './tagsInput.module.scss';
+import PostTag from '../postTag/postTag';
 
 interface Tag {
 	id: number;
@@ -41,9 +41,9 @@ const TagsInput = React.forwardRef<HTMLInputElement, TagsInputProps>(function (
 	const tagsStatus = useRef<TagsStatus>({}).current;
 
 	const { data = [] } = useQuery<Tag[]>({
-		queryKey: ["categories"],
+		queryKey: ['categories'],
 		queryFn: async () => {
-			const result = await axios.get<Tag[]>("category");
+			const result = await axios.get<Tag[]>('category');
 			result.data.forEach((item) => {
 				tagsData[item.id] = item.name;
 			});
@@ -73,8 +73,8 @@ const TagsInput = React.forwardRef<HTMLInputElement, TagsInputProps>(function (
 			const getNewIds = produce<number[]>((tagsIds) => {
 				tagsIds.push(tagId);
 			});
-			let newTagsIds = getNewIds(tagsIds);
-			setValueFn("tags", newTagsIds, { shouldValidate: true });
+			const newTagsIds = getNewIds(tagsIds);
+			setValueFn('tags', newTagsIds, { shouldValidate: true });
 			return newTagsIds;
 		});
 	};
@@ -83,8 +83,8 @@ const TagsInput = React.forwardRef<HTMLInputElement, TagsInputProps>(function (
 		tagsStatus[id] = false;
 		setTags((tags) => tags.filter((item) => item.id !== id));
 		setTagsId((tagsIds) => {
-			let newTagsIds = tagsIds.filter((item) => item !== id);
-			setValueFn("tags", newTagsIds, { shouldValidate: true });
+			const newTagsIds = tagsIds.filter((item) => item !== id);
+			setValueFn('tags', newTagsIds, { shouldValidate: true });
 			return newTagsIds;
 		});
 	};
@@ -93,9 +93,9 @@ const TagsInput = React.forwardRef<HTMLInputElement, TagsInputProps>(function (
 			<div className={styles.selectWrapper}>
 				<TextField
 					select
-					label='choose tags'
+					label="choose tags"
 					onChange={handleSelectChange}
-					defaultValue={""}
+					defaultValue={''}
 					fullWidth
 					error={error}
 					helperText={helperText}
@@ -110,7 +110,7 @@ const TagsInput = React.forwardRef<HTMLInputElement, TagsInputProps>(function (
 			<div className={styles.tags}>
 				{tags.map((tag) => (
 					<PostTag
-						type='form'
+						type="form"
 						key={`postTag${tag.id}`}
 						id={tag.id}
 						name={tag.name}

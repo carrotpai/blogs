@@ -1,9 +1,9 @@
-import React from "react";
+import React from 'react';
 
-import VoteCount from "../voteCount/voteCount";
-import CommentCount from "../commentCount/commentCount";
+import VoteCount from '../voteCount/voteCount';
+import CommentCount from '../commentCount/commentCount';
 
-import styles from "./postStats.module.scss";
+import styles from './postStats.module.scss';
 
 interface PostStatsProps {
 	rating: number;

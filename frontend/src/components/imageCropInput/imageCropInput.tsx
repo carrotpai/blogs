@@ -4,20 +4,20 @@ import React, {
 	useImperativeHandle,
 	useRef,
 	useState,
-} from "react";
+} from 'react';
 import ReactCrop, {
 	centerCrop,
 	makeAspectCrop,
 	type Crop,
 	type PixelCrop,
-} from "react-image-crop";
+} from 'react-image-crop';
 
-import styles from "./imageCropInput.module.scss";
-import "react-image-crop/dist/ReactCrop.css";
+import styles from './imageCropInput.module.scss';
+import 'react-image-crop/dist/ReactCrop.css';
 
-import { useDebounceEffect } from "../../hooks/useDebounceEffect";
-import { canvasPreview } from "../../utils/imageCrop/canvasPreview";
-import { Button } from "@mui/material";
+import { useDebounceEffect } from '../../hooks/useDebounceEffect';
+import { canvasPreview } from '../../utils/imageCrop/canvasPreview';
+import { Button } from '@mui/material';
 
 type Ref = {
 	canvasRef: RefObject<HTMLCanvasElement>;
@@ -32,7 +32,7 @@ function centerAspectCrop(
 	return centerCrop(
 		makeAspectCrop(
 			{
-				unit: "%",
+				unit: '%',
 				width: 65,
 			},
 			aspect,
@@ -47,7 +47,7 @@ function centerAspectCrop(
 const ImageCropInput = forwardRef<Ref, {}>(function ImageCropInput(props, ref) {
 	const [crop, setCrop] = useState<Crop>();
 	const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
-	const [imgSrc, setImgSrc] = useState("");
+	const [imgSrc, setImgSrc] = useState('');
 	const imgRef = useRef<HTMLImageElement>(null);
 	const previewCanvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -57,7 +57,7 @@ const ImageCropInput = forwardRef<Ref, {}>(function ImageCropInput(props, ref) {
 			canvasRef: previewCanvasRef,
 			toDataString: (cb) => {
 				if (!previewCanvasRef.current) {
-					throw new Error("Crop canvas does not exist");
+					throw new Error('Crop canvas does not exist');
 				}
 				previewCanvasRef.current.toBlob(cb);
 			},
@@ -74,8 +74,8 @@ const ImageCropInput = forwardRef<Ref, {}>(function ImageCropInput(props, ref) {
 		if (e.target.files && e.target.files.length > 0) {
 			setCrop(undefined);
 			const reader = new FileReader();
-			reader.addEventListener("load", () => {
-				setImgSrc(reader.result?.toString() || "");
+			reader.addEventListener('load', () => {
+				setImgSrc(reader.result?.toString() || '');
 			});
 			reader.readAsDataURL(e.target.files[0]);
 		}
@@ -89,7 +89,11 @@ const ImageCropInput = forwardRef<Ref, {}>(function ImageCropInput(props, ref) {
 				imgRef.current &&
 				previewCanvasRef.current
 			) {
-				canvasPreview(imgRef.current, previewCanvasRef.current, completedCrop);
+				canvasPreview(
+					imgRef.current,
+					previewCanvasRef.current,
+					completedCrop
+				);
 			}
 		},
 		100,
@@ -98,10 +102,15 @@ const ImageCropInput = forwardRef<Ref, {}>(function ImageCropInput(props, ref) {
 
 	return (
 		<div className={styles.wrapper}>
-			<div className='fileInput'>
-				<Button component='label' variant='outlined'>
+			<div className="fileInput">
+				<Button component="label" variant="outlined">
 					Upload image
-					<input type='file' accept='image/*' hidden onChange={onSelectFile} />
+					<input
+						type="file"
+						accept="image/*"
+						hidden
+						onChange={onSelectFile}
+					/>
 				</Button>
 			</div>
 			<div className={styles.crop}>
@@ -114,7 +123,12 @@ const ImageCropInput = forwardRef<Ref, {}>(function ImageCropInput(props, ref) {
 						onChange={(c) => setCrop(c)}
 						onComplete={(c) => setCompletedCrop(c)}
 					>
-						<img src={imgSrc} ref={imgRef} onLoad={onImageLoad} width={500} />
+						<img
+							src={imgSrc}
+							ref={imgRef}
+							onLoad={onImageLoad}
+							width={500}
+						/>
 					</ReactCrop>
 				)}
 				{!!completedCrop && (
@@ -123,10 +137,10 @@ const ImageCropInput = forwardRef<Ref, {}>(function ImageCropInput(props, ref) {
 							<canvas
 								ref={previewCanvasRef}
 								style={{
-									display: "none",
-									borderRadius: "100%",
-									border: "1px solid black",
-									objectFit: "contain",
+									display: 'none',
+									borderRadius: '100%',
+									border: '1px solid black',
+									objectFit: 'contain',
 									width: completedCrop.width,
 									height: completedCrop.height,
 								}}

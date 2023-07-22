@@ -1,18 +1,20 @@
-import React from "react";
+import React from 'react';
 
-import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { Autoplay, Virtual } from "swiper";
+import { Autoplay, Virtual } from 'swiper';
 
-import "swiper/css";
-import styles from "./smallSlider.module.scss";
-import RecommendationCard from "../recommendationCard/recommendationCard";
-import { recommendations } from "../../constants/recommendations";
+import 'swiper/css';
+import styles from './smallSlider.module.scss';
+import RecommendationCard from '../recommendationCard/recommendationCard';
+import { recommendations } from '../../constants/recommendations';
 
 function SmallSlider() {
 	return (
 		<div className={styles.recommendations}>
-			<div className={styles.recommendations__title}># Recommendation</div>
+			<div className={styles.recommendations__title}>
+				# Recommendation
+			</div>
 			<Swiper
 				slidesPerView={5}
 				loop={true}
@@ -23,7 +25,7 @@ function SmallSlider() {
 				}}
 				spaceBetween={8}
 				modules={[Virtual, Autoplay]}
-				className='swiper'
+				className="swiper"
 				virtual
 			>
 				{recommendations.map((cardContent, index) => (

@@ -1,14 +1,14 @@
-import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
-import React, { useState } from "react";
-import * as yup from "yup";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
+import React, { useState } from 'react';
+import * as yup from 'yup';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
-import RoundedTextField from "../roundedTextField/roundedTextField";
+import RoundedTextField from '../roundedTextField/roundedTextField';
 
-import styles from "./loginForm.module.scss";
-import { useTokenStore, useUserStore } from "../../store/store";
-import { useNavigate } from "react-router";
+import styles from './loginForm.module.scss';
+import { useTokenStore, useUserStore } from '../../store/store';
+import { useNavigate } from 'react-router';
 
 interface LoginFormData {
 	username: string;
@@ -38,8 +38,8 @@ function LoginForm() {
 		clearErrors,
 	} = useForm<LoginFormData>({
 		defaultValues: {
-			username: "",
-			password: "",
+			username: '',
+			password: '',
 		},
 		resolver: yupResolver(schema),
 	});
@@ -48,38 +48,38 @@ function LoginForm() {
 		try {
 			await signin(data.username, data.password);
 		} catch (e) {
-			setError("username", {
-				type: "401",
-				message: "wrong username or password",
+			setError('username', {
+				type: '401',
+				message: 'wrong username or password',
 			});
-			setError("password", {
-				type: "401",
-				message: "wrong username or password",
+			setError('password', {
+				type: '401',
+				message: 'wrong username or password',
 			});
 			setIsCredentialsValid(false);
 			return;
 		}
-		navigate("/");
+		navigate('/');
 	};
 	return (
 		<>
 			<form
-				action='submit'
+				action="submit"
 				className={styles.form}
 				onSubmit={handleSubmit(onSubmit)}
 			>
 				<div className={styles.inputs}>
 					<Controller
-						name='username'
+						name="username"
 						control={control}
 						render={({ field }) => (
 							<RoundedTextField
-								id='username'
-								label='username'
-								variant='outlined'
+								id="username"
+								label="username"
+								variant="outlined"
 								error={!!errors.username}
 								helperText={errors.username?.message}
-								autoComplete='username'
+								autoComplete="username"
 								{...field}
 								onClick={() => {
 									if (!isCredentialsValid) clearErrors();
@@ -89,16 +89,16 @@ function LoginForm() {
 						)}
 					/>
 					<Controller
-						name='password'
+						name="password"
 						control={control}
 						render={({ field }) => (
 							<RoundedTextField
-								id='password'
-								label='password'
-								variant='outlined'
+								id="password"
+								label="password"
+								variant="outlined"
 								error={!!errors.password}
 								helperText={errors.password?.message}
-								autoComplete='password'
+								autoComplete="password"
 								{...field}
 								onClick={() => {
 									if (!isCredentialsValid) clearErrors();
@@ -111,17 +111,17 @@ function LoginForm() {
 				<FormGroup className={styles.checkbox}>
 					<FormControlLabel
 						sx={{
-							".MuiFormControlLabel-label": {
-								fontSize: "16px",
-								marginTop: "4px",
+							'.MuiFormControlLabel-label': {
+								fontSize: '16px',
+								marginTop: '4px',
 							},
 						}}
 						control={<Checkbox defaultChecked />}
-						label='Remember me'
+						label="Remember me"
 						onChange={() => changeRememberMe()}
 					/>
 				</FormGroup>
-				<button type='submit' className={styles.button}>
+				<button type="submit" className={styles.button}>
 					Login
 				</button>
 			</form>

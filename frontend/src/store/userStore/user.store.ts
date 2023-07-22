@@ -1,8 +1,8 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { axiosPrivate } from "../../api/axios";
-import { ISigninTokens } from "../../types/types";
-import { produce } from "immer";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import { axiosPrivate } from '../../api/axios';
+import { ISigninTokens } from '../../types/types';
+import { produce } from 'immer';
 
 interface User {
 	user?: {
@@ -29,7 +29,7 @@ export const useUserStore = create<User>((set) => ({
 
 	signin: async (username: string, password: string) => {
 		const res = (
-			await axiosPrivate.post<ISigninTokens>("auth/signin", {
+			await axiosPrivate.post<ISigninTokens>('auth/signin', {
 				username,
 				password,
 			})
@@ -66,6 +66,6 @@ export const useTokenStore = create<storeTokens>()(
 				);
 			},
 		}),
-		{ name: "metablog-user" }
+		{ name: 'metablog-user' }
 	)
 );

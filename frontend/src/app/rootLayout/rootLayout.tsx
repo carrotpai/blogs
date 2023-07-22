@@ -1,13 +1,13 @@
-import React from "react";
-import { Outlet, matchRoutes, renderMatches, useLocation } from "react-router";
+import React from 'react';
+import { Outlet, matchRoutes, renderMatches, useLocation } from 'react-router';
 
-import routes, { modalsRoutes } from "../router/routes";
-import styles from "./rootLayout.module.scss";
-import Modal from "../../components/modal/modal";
+import routes, { modalsRoutes } from '../router/routes';
+import styles from './rootLayout.module.scss';
+import Modal from '../../components/modal/modal';
 import {
 	renderBackgroundPage,
 	renderModal,
-} from "../router/modalRenderingUtils";
+} from '../router/modalRenderingUtils';
 
 function RootLayout() {
 	const location = useLocation();

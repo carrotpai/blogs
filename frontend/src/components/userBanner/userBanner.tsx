@@ -1,14 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react';
 
-import { Link, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { Link, useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 
-import { getRelativeTime } from "../../utils/timeUtils/timeUtils";
-import { useUserStore } from "../../store/store";
-import { axios } from "../../api/axios";
+import { getRelativeTime } from '../../utils/timeUtils/timeUtils';
+import { useUserStore } from '../../store/store';
+import { axios } from '../../api/axios';
 
-import testAvatar from "../../../img/testAvatar.png";
-import styles from "./userBanner.module.scss";
+import testAvatar from '../../../img/testAvatar.png';
+import styles from './userBanner.module.scss';
 
 interface UserInfo {
 	username: string;
@@ -31,14 +31,14 @@ function UserBanner() {
 	const isCurrentLoginAccount = user && userId && user.id === +userId;
 
 	const { data, isLoading } = useQuery<UserInfo>({
-		queryKey: ["user", userId],
+		queryKey: ['user', userId],
 		queryFn: async () => {
 			return (await axios.get(`user/${userId}`)).data;
 		},
 		placeholderData: () => {
 			if (isCurrentLoginAccount) {
 				return {
-					username: user ? user.username : "",
+					username: user ? user.username : '',
 					info: user.info,
 					description: user.description,
 					stats: {
@@ -65,22 +65,24 @@ function UserBanner() {
 						width={64}
 						height={64}
 					/>
-					<div className='user__text'>
-						<p className={styles.user__username}>{data?.username}</p>
+					<div className="user__text">
+						<p className={styles.user__username}>
+							{data?.username}
+						</p>
 						<p className={styles.user__info}>{data?.info}</p>
 					</div>
 				</div>
 				<div className={styles.description}>{data?.description}</div>
-				<Link to={"change"}>Change profile</Link>
+				<Link to={'change'}>Change profile</Link>
 			</div>
 			<div className={styles.right}>
-				<div className='stats'>
-					<p className='posts'>{`posts: ${0}`}</p>
-					<p className='comments'>{`comments: ${0}`}</p>
-					<p className='rating'>{`rating: ${0}`}</p>
+				<div className="stats">
+					<p className="posts">{`posts: ${0}`}</p>
+					<p className="comments">{`comments: ${0}`}</p>
+					<p className="rating">{`rating: ${0}`}</p>
 				</div>
-				<div className='socials'>
-					<p className='registred'>{`date registred: ${getRelativeTime(
+				<div className="socials">
+					<p className="registred">{`date registred: ${getRelativeTime(
 						new Date()
 					)}`}</p>
 				</div>

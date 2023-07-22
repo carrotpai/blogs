@@ -1,7 +1,7 @@
-import React from "react";
-import SmallSlider from "../../components/smallSlider/smallSlider";
+import React from 'react';
+import SmallSlider from '../../components/smallSlider/smallSlider';
 
-import styles from "./mainPage.module.scss";
+import styles from './mainPage.module.scss';
 
 function MainPage() {
 	return (

@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react';
 
-import styles from "./recommendation.module.scss";
-import { useLocation, useNavigate } from "react-router";
+import styles from './recommendation.module.scss';
+import { useLocation, useNavigate } from 'react-router';
 
 interface IRecommendationCardProps {
 	image: string;
@@ -28,7 +28,7 @@ function RecommendationCard({
 			<span
 				className={styles.card__author}
 				onClick={() => {
-					navigate("/user/1", { state: { background: pathname } });
+					navigate('/user/1', { state: { background: pathname } });
 				}}
 			>
 				{author}

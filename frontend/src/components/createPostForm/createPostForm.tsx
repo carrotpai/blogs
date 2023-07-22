@@ -1,37 +1,37 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import ReactQuill from "react-quill";
-import { DeltaStatic } from "quill";
-import { Button } from "@mui/material";
-import { Controller, useForm, SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { object, string, array, number } from "yup";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import ReactQuill from 'react-quill';
+import { DeltaStatic } from 'quill';
+import { Button } from '@mui/material';
+import { Controller, useForm, SubmitHandler } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { object, string, array, number } from 'yup';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { axios } from "../../api/axios";
-import TextField from "../textField/responsiveTextField";
-import TagsInput from "../tagsInput/tagsInput";
-import { createPostFormData } from "../../types/types";
-import { formats, modules } from "../../utils/quill/quillConfig";
+import { axios } from '../../api/axios';
+import TextField from '../textField/responsiveTextField';
+import TagsInput from '../tagsInput/tagsInput';
+import { createPostFormData } from '../../types/types';
+import { formats, modules } from '../../utils/quill/quillConfig';
 
-import "react-quill/dist/quill.snow.css";
-import styles from "./createPostForm.module.scss";
+import 'react-quill/dist/quill.snow.css';
+import styles from './createPostForm.module.scss';
 
 function CreatePostForm() {
 	const quillRef = useRef<ReactQuill>(null);
 	const [delta, setDelta] = useState<DeltaStatic>();
-	const [previewImageSrc, setPreviewImageSrc] = useState("");
+	const [previewImageSrc, setPreviewImageSrc] = useState('');
 
 	const queryClient = useQueryClient();
 	const { mutate, isLoading } = useMutation({
 		mutationFn: async (formData: FormData) => {
-			return axios.post("post", formData, {
+			return axios.post('post', formData, {
 				headers: {
-					"Content-Type": "multipart/form-data",
+					'Content-Type': 'multipart/form-data',
 				},
 			});
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["posts"] });
+			queryClient.invalidateQueries({ queryKey: ['posts'] });
 		},
 	});
 
@@ -39,7 +39,7 @@ function CreatePostForm() {
 		tags: array()
 			.required()
 			.of(number().integer().moreThan(0))
-			.min(1, "choose at least 1 tag"),
+			.min(1, 'choose at least 1 tag'),
 		title: string().required(),
 		description: string().required(),
 	});
@@ -52,8 +52,8 @@ function CreatePostForm() {
 		setValue,
 	} = useForm<createPostFormData>({
 		defaultValues: {
-			title: "",
-			description: "",
+			title: '',
+			description: '',
 			tags: [],
 		},
 		resolver: yupResolver(schema),
@@ -66,11 +66,11 @@ function CreatePostForm() {
 	const onSumbit: SubmitHandler<createPostFormData> = async (data) => {
 		const previewBlob = await (await fetch(previewImageSrc)).blob();
 		const formData = new FormData();
-		formData.append("cover", previewBlob);
-		formData.append("content", JSON.stringify(delta));
-		formData.append("title", data.title);
-		formData.append("description", data.description);
-		formData.append("tags", JSON.stringify(data.tags));
+		formData.append('cover', previewBlob);
+		formData.append('content', JSON.stringify(delta));
+		formData.append('title', data.title);
+		formData.append('description', data.description);
+		formData.append('tags', JSON.stringify(data.tags));
 		mutate(formData);
 	};
 
@@ -86,7 +86,7 @@ function CreatePostForm() {
 		URL.revokeObjectURL(previewImageSrc);
 		const target = e.target as HTMLInputElement;
 		const image = target.files ? target.files[0] : undefined;
-		if (!image) throw new Error("error when uploading file");
+		if (!image) throw new Error('error when uploading file');
 		const imageSrc = URL.createObjectURL(image);
 		setPreviewImageSrc(imageSrc);
 	};
@@ -95,33 +95,33 @@ function CreatePostForm() {
 		<div className={styles.content}>
 			<p className={styles.title__text}>Create new Post</p>
 			<form
-				action='submit'
+				action="submit"
 				onSubmit={handleSubmit(onSumbit)}
 				className={styles.postForm}
 			>
-				<div className='title'>
+				<div className="title">
 					<p className={styles.text}>Post Title</p>
 					<Controller
-						name='title'
+						name="title"
 						control={control}
 						render={({ field }) => (
 							<TextField
-								variant='outlined'
-								label='Title'
+								variant="outlined"
+								label="Title"
 								fullWidth
 								error={!!errors.title}
-								helperText={errors.title?.message ?? ""}
+								helperText={errors.title?.message ?? ''}
 								{...field}
 							/>
 						)}
 					/>
 				</div>
-				<div className='fileInput'>
-					<Button component='label' variant='outlined'>
+				<div className="fileInput">
+					<Button component="label" variant="outlined">
 						Upload image for preview
 						<input
-							type='file'
-							accept='image/*'
+							type="file"
+							accept="image/*"
 							onChange={onFileSelect}
 							hidden
 						/>
@@ -129,43 +129,49 @@ function CreatePostForm() {
 					<div className={styles.preview}>
 						{!!previewImageSrc && (
 							<div>
-								<img src={previewImageSrc} alt='preview' width={600} />
+								<img
+									src={previewImageSrc}
+									alt="preview"
+									width={600}
+								/>
 							</div>
 						)}
 					</div>
 				</div>
-				<div className='description'>
-					<p className={styles.text}>Short description of your Post</p>
+				<div className="description">
+					<p className={styles.text}>
+						Short description of your Post
+					</p>
 					<Controller
-						name='description'
+						name="description"
 						control={control}
 						render={({ field }) => (
 							<TextField
-								variant='outlined'
-								label='Short description'
+								variant="outlined"
+								label="Short description"
 								multiline
 								rows={5}
 								fullWidth
 								error={!!errors.description}
-								helperText={errors.description?.message ?? ""}
+								helperText={errors.description?.message ?? ''}
 								{...field}
 							/>
 						)}
 					/>
 				</div>
-				<div className='tags'>
+				<div className="tags">
 					<p className={styles.text}>Post tags</p>
 					<TagsInput
 						setValueFn={setValue}
 						error={!!errors.tags}
 						helperText={errors.tags?.message}
-						{...register("tags")}
+						{...register('tags')}
 					/>
 				</div>
-				<div className='post'>
+				<div className="post">
 					<p className={styles.text}>Post content</p>
 					<ReactQuill
-						theme='snow'
+						theme="snow"
 						value={delta}
 						onChange={(e) => {
 							const editor = quillEditor();
@@ -176,7 +182,7 @@ function CreatePostForm() {
 						ref={quillRef}
 					/>
 				</div>
-				<button type='submit' className={styles.button}>
+				<button type="submit" className={styles.button}>
 					create post
 				</button>
 			</form>

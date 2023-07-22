@@ -1,8 +1,8 @@
-import React from "react";
-import LoginForm from "../../../components/loginForm/loginForm";
+import React from 'react';
+import LoginForm from '../../../components/loginForm/loginForm';
 
-import styles from "./login.module.scss";
-import { Link } from "react-router-dom";
+import styles from './login.module.scss';
+import { Link } from 'react-router-dom';
 
 function Login() {
 	return (
@@ -14,7 +14,7 @@ function Login() {
 				</p>
 			</div>
 			<LoginForm />
-			<Link to='/register' className={styles.link}>
+			<Link to="/register" className={styles.link}>
 				Register
 			</Link>
 		</div>

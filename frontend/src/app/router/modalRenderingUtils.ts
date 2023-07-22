@@ -1,4 +1,4 @@
-import { RouteObject, matchRoutes, renderMatches } from "react-router";
+import { RouteObject, matchRoutes, renderMatches } from 'react-router';
 
 export const renderBackgroundPage = (
 	routes: RouteObject[],

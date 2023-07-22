@@ -1,6 +1,6 @@
-import axios from "axios";
+import axios from 'axios';
 
-import("../../../store/store").then(({ useTokenStore }) => {
+import('../../../store/store').then(({ useTokenStore }) => {
 	sub = useTokenStore.subscribe((state) => {
 		tokens = {
 			accessToken: state.accessToken,
@@ -16,7 +16,7 @@ interface Tokens {
 }
 
 const axiosPrivate = axios.create({
-	baseURL: "http://localhost:3000/api/",
+	baseURL: 'http://localhost:3000/api/',
 });
 
 let tokens: Tokens = {};

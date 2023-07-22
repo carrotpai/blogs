@@ -1,8 +1,8 @@
-import React from "react";
+import React from 'react';
 
-import PostTag from "../postTag/postTag";
+import PostTag from '../postTag/postTag';
 
-import styles from "./tagList.module.scss";
+import styles from './tagList.module.scss';
 
 interface TagListProps {
 	tags: Array<{ category: { name: string } }>;

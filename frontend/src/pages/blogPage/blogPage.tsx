@@ -1,7 +1,7 @@
-import React from "react";
-import BlogPost from "../../components/blogPost/blogPost";
+import React from 'react';
+import BlogPost from '../../components/blogPost/blogPost';
 
-import styles from "./blogPage.module.scss";
+import styles from './blogPage.module.scss';
 
 function BlogPage() {
 	return (

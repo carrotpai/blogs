@@ -1,15 +1,15 @@
-import React from "react";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import routes from "./router/routes";
-import { createTheme, responsiveFontSizes } from "@mui/material";
-import { ThemeProvider } from "@emotion/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import React from 'react';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import routes from './router/routes';
+import { createTheme, responsiveFontSizes } from '@mui/material';
+import { ThemeProvider } from '@emotion/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const router = createBrowserRouter(routes);
 let theme = createTheme({
 	typography: {
-		fontFamily: "Work Sans",
+		fontFamily: 'Work Sans',
 	},
 	breakpoints: {
 		values: {

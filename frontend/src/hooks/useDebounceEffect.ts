@@ -1,4 +1,4 @@
-import { useEffect, DependencyList } from "react";
+import { useEffect, DependencyList } from 'react';
 
 export function useDebounceEffect(
 	fn: () => void,

@@ -50,7 +50,7 @@ export class UserController {
   ) {
     console.log(file);
     console.log(updateUserDto);
-    return this.userService.update(file, updateUserDto, userId);
+    return this.userService.update(updateUserDto, userId, file);
   }
 
   @Delete(':id')

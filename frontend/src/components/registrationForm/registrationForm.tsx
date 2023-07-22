@@ -1,12 +1,12 @@
-import React from "react";
-import * as yup from "yup";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import React from 'react';
+import * as yup from 'yup';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
-import RoundedTextField from "../roundedTextField/roundedTextField";
-import { axios } from "../../api/axios";
+import RoundedTextField from '../roundedTextField/roundedTextField';
+import { axios } from '../../api/axios';
 
-import styles from "./registrationForm.module.scss";
+import styles from './registrationForm.module.scss';
 
 interface RegistrationFormInputData {
 	username: string;
@@ -22,13 +22,13 @@ function RegistrationForm() {
 			.required()
 			.matches(
 				/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/,
-				"password must have minimum length of 8 characters and containt at least 1 capital letter and 1 number"
+				'password must have minimum length of 8 characters and containt at least 1 capital letter and 1 number'
 			),
 		passwordRepeat: yup
 			.string()
-			.required("repeat password is required field")
-			.test("equal", `Passwords don't match`, function (value) {
-				const ref = yup.ref("password");
+			.required('repeat password is required field')
+			.test('equal', `Passwords don't match`, function (value) {
+				const ref = yup.ref('password');
 				return value === this.resolve(ref);
 			}),
 	});
@@ -39,9 +39,9 @@ function RegistrationForm() {
 		formState: { errors },
 	} = useForm<RegistrationFormInputData>({
 		defaultValues: {
-			username: "",
-			password: "",
-			passwordRepeat: "",
+			username: '',
+			password: '',
+			passwordRepeat: '',
 		},
 		resolver: yupResolver(schema),
 	});
@@ -49,7 +49,7 @@ function RegistrationForm() {
 	const onSumbit: SubmitHandler<RegistrationFormInputData> = async (data) => {
 		console.log(data);
 		const res = (
-			await axios.post("auth/register", {
+			await axios.post('auth/register', {
 				username: data.username,
 				password: data.password,
 			})
@@ -59,19 +59,19 @@ function RegistrationForm() {
 	return (
 		<>
 			<form
-				action='submit'
+				action="submit"
 				className={styles.form}
 				onSubmit={handleSubmit(onSumbit)}
 			>
 				<div className={styles.inputs}>
 					<Controller
-						name='username'
+						name="username"
 						control={control}
 						render={({ field }) => (
 							<RoundedTextField
-								id='username'
-								label='username'
-								variant='outlined'
+								id="username"
+								label="username"
+								variant="outlined"
 								helperText={errors.username?.message}
 								error={!!errors.username}
 								{...field}
@@ -79,13 +79,13 @@ function RegistrationForm() {
 						)}
 					/>
 					<Controller
-						name='password'
+						name="password"
 						control={control}
 						render={({ field }) => (
 							<RoundedTextField
-								id='password'
-								label='password'
-								variant='outlined'
+								id="password"
+								label="password"
+								variant="outlined"
 								helperText={errors.password?.message}
 								error={!!errors.password}
 								{...field}
@@ -93,13 +93,13 @@ function RegistrationForm() {
 						)}
 					/>
 					<Controller
-						name='passwordRepeat'
+						name="passwordRepeat"
 						control={control}
 						render={({ field }) => (
 							<RoundedTextField
-								id='passwordRepeat'
-								label='repeat password'
-								variant='outlined'
+								id="passwordRepeat"
+								label="repeat password"
+								variant="outlined"
 								helperText={errors.passwordRepeat?.message}
 								error={!!errors.passwordRepeat}
 								{...field}
@@ -107,7 +107,7 @@ function RegistrationForm() {
 						)}
 					/>
 				</div>
-				<button type='submit' className={styles.button}>
+				<button type="submit" className={styles.button}>
 					Register
 				</button>
 			</form>
