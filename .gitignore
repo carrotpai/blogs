@@ -2,6 +2,9 @@
 dist
 node_modules
 
+backend/images/avatar/*
+backend/images/postCovers/*
+
 # Logs
 logs
 *.log

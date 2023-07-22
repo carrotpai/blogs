@@ -2,6 +2,9 @@
 /dist
 /node_modules
 
+/images/avatar/*
+/images/postCovers/*
+
 # Logs
 logs
 *.log
