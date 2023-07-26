@@ -10,10 +10,12 @@ interface User {
 		username: string;
 		rating: number;
 		info: string;
+		avatar?: string;
 		description: string;
 		role: any;
 	};
 	signin: (username: string, password: string) => Promise<void>;
+	getUser: () => Promise<void>;
 }
 
 interface storeTokens {
@@ -26,7 +28,20 @@ interface storeTokens {
 
 export const useUserStore = create<User>((set) => ({
 	user: undefined,
-
+	getUser: async () => {
+		try {
+			const res = (
+				await axiosPrivate.post<User['user']>('auth/getAuthData')
+			).data;
+			set(
+				produce<User>((state) => {
+					state.user = res;
+				})
+			);
+		} catch (e) {
+			console.log(e);
+		}
+	},
 	signin: async (username: string, password: string) => {
 		const res = (
 			await axiosPrivate.post<ISigninTokens>('auth/signin', {
@@ -47,8 +62,8 @@ export const useUserStore = create<User>((set) => ({
 export const useTokenStore = create<storeTokens>()(
 	persist(
 		(set, get) => ({
-			accessToken: undefined,
-			refreshToken: undefined,
+			accessToken: '',
+			refreshToken: '',
 			rememberMe: false,
 			setTokens: (accessToken: string, refreshToken: string) => {
 				set(

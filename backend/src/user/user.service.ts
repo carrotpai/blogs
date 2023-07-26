@@ -22,14 +22,14 @@ export class UserService {
   constructor(private readonly hashService: HashService) {}
 
   private async saveAvatar(username: string, avatar: Express.Multer.File) {
-    const avatarDir = join(process.cwd(), 'images/avatar', 'testUser');
+    const avatarDir = join(process.cwd(), 'images/avatar', username);
     if (!existsSync(avatarDir)) {
       await mkdir(avatarDir);
     }
     const ext = avatar.mimetype.split('/');
     ext.shift();
-    await writeImage(join(avatarDir, 'testUser.png'), avatar);
-    return join();
+    await writeImage(join(avatarDir, `${username}.${ext[0]}`), avatar);
+    return join('images', 'avatar', username, `${username}.${ext[0]}`);
   }
 
   async create(username: string, password: string) {
@@ -49,8 +49,6 @@ export class UserService {
   ) {
     let updateData = {
       ...updateUserDto,
-      //удаляем ненужное поле для таблицы БД
-      newPassword: undefined,
     };
 
     let dir;
@@ -61,7 +59,7 @@ export class UserService {
     if (dir) {
       updateData['avatar'] = dir;
     }
-    if (updateUserDto.newPassword) {
+    if (updateUserDto?.newPassword) {
       const isValid = await this.hashService.compare(
         updateUserDto.password,
         user.password,
@@ -72,6 +70,9 @@ export class UserService {
       const hash = await this.hashService.create(updateUserDto.newPassword);
       updateData.password = hash;
     }
+    //удаляем ненужное поле для таблицы БД
+    delete updateData.newPassword;
+    console.log(updateData);
     await prisma.user.update({
       where: { id: userId },
       data: updateData,
@@ -80,10 +81,6 @@ export class UserService {
 
   findAll() {
     return `This action returns all user`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
   }
 
   async findOneByIdOrFail(userId: number) {
@@ -121,19 +118,13 @@ export class UserService {
   }
 
   async updateUserRefreshToken(userId: number, refreshToken: string) {
-    let hash;
-    try {
-      hash = await this.hashService.create(refreshToken);
-    } catch (error) {
-      hash = undefined;
-    }
     await prisma.user.update({
       where: { id: userId },
       data: {
-        refreshToken: hash,
+        refreshToken: refreshToken,
       },
     });
-    return undefined;
+    return;
   }
 
   remove(id: number) {

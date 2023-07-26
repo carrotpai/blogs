@@ -6,6 +6,11 @@ import { mkdir } from 'fs/promises';
 import writeImage from 'src/utils/writeImage';
 import { prisma } from 'prisma/prismaClient';
 
+interface RatingChangeObject {
+  increment?: number;
+  decrement?: number;
+}
+
 @Injectable()
 export class PostService {
   private async savePreviewCover(
@@ -19,20 +24,24 @@ export class PostService {
     const ext = preview.mimetype.split('/');
     ext.shift();
     await writeImage(join(previewDir, `${postTitle}.${ext[0]}`), preview);
-    return join('images/postCovers', postTitle, `${postTitle}.${ext[0]}`);
+    return join('images', 'postCovers', postTitle, `${postTitle}.${ext[0]}`);
   }
 
   async createPost(
     createPostDto: CreatePostDTO,
+    userId: number,
     coverImg: Express.Multer.File,
   ) {
+    console.log(createPostDto);
     let coverPath;
-    const tmpUser = await prisma.user.findUnique({ where: { id: 1 } });
+    const user = await prisma.user.findUnique({ where: { id: userId } });
     try {
-      coverPath = await this.savePreviewCover(
-        createPostDto.title.replaceAll(' ', ''),
-        coverImg,
-      );
+      if (coverImg) {
+        coverPath = await this.savePreviewCover(
+          createPostDto.title.replaceAll(' ', ''),
+          coverImg,
+        );
+      }
     } catch (error) {
       throw new InternalServerErrorException('error saving post images');
     }
@@ -47,7 +56,7 @@ export class PostService {
           },
         },
         author: {
-          connect: { id: tmpUser.id },
+          connect: { id: user.id },
         },
         categories: {
           create: createPostDto.tags.map((tagId) => ({
@@ -58,6 +67,7 @@ export class PostService {
             },
           })),
         },
+        userLikedPosts: { create: { userId: userId } },
       },
     });
   }
@@ -71,6 +81,7 @@ export class PostService {
         author: {
           select: {
             username: true,
+            avatar: true,
           },
         },
         postContent: { select: { content: true } },
@@ -79,8 +90,96 @@ export class PostService {
             category: true,
           },
         },
+        userLikedPosts: {
+          select: {
+            status: true,
+          },
+        },
       },
     });
-    return post;
+    let status = 0;
+    if (post) {
+      status = post.userLikedPosts[0].status;
+    }
+    const res = { ...post, status };
+    delete res.userLikedPosts;
+    return res;
+  }
+
+  async upvote(userId: number, postId: number) {
+    const postStatusForUser = await prisma.userLikedPosts.findUnique({
+      where: { userId_postId: { userId, postId } },
+    });
+    let newRating: RatingChangeObject = {
+      increment: 1,
+    };
+    let isAlreadyVoted = false;
+    if (postStatusForUser) {
+      if (postStatusForUser.status > 0) {
+        newRating = { decrement: 1 };
+        isAlreadyVoted = true;
+      }
+      if (postStatusForUser.status < 0) {
+        newRating = { increment: 2 };
+      }
+    }
+    console.log('in upvote');
+    await prisma.post.update({
+      where: { id: postId },
+      data: {
+        rating: newRating,
+        userLikedPosts: {
+          upsert: {
+            where: {
+              userId_postId: { userId, postId },
+            },
+            update: {
+              status: isAlreadyVoted ? 0 : 1,
+            },
+            create: {
+              userId: userId,
+              status: 1,
+            },
+          },
+        },
+      },
+    });
+  }
+
+  async downvote(userId: number, postId: number) {
+    const postStatusForUser = await prisma.userLikedPosts.findUnique({
+      where: { userId_postId: { userId, postId } },
+    });
+    let newRating: RatingChangeObject = { decrement: 1 };
+    let isAlreadyVoted: boolean = false;
+    if (postStatusForUser) {
+      if (postStatusForUser.status < 0) {
+        isAlreadyVoted = true;
+        newRating = { increment: 1 };
+      }
+      if (postStatusForUser.status > 0) {
+        newRating = { decrement: 2 };
+      }
+    }
+    await prisma.post.update({
+      where: { id: postId },
+      data: {
+        rating: newRating,
+        userLikedPosts: {
+          upsert: {
+            where: {
+              userId_postId: { userId, postId },
+            },
+            update: {
+              status: isAlreadyVoted ? 0 : -1,
+            },
+            create: {
+              userId: userId,
+              status: -1,
+            },
+          },
+        },
+      },
+    });
   }
 }

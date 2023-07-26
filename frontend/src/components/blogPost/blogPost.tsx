@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactQuill from 'react-quill';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router';
@@ -8,36 +8,35 @@ import UserBar from '../userBar/userBar';
 import PostStats from '../postStats/postStats';
 import TagList from '../tagList/tagList';
 import { getRelativeTime, toLocalTime } from '../../utils/timeUtils/timeUtils';
+import { getImageURL } from '../../utils/images/utils';
+import { CDN } from '../../constants/cdn';
+import Comments from '../comments/comments';
+import { PostData } from '../../types/types';
+import { useVoteChange } from '../../hooks/useVoteChange';
 
 import styles from './blogPost.module.scss';
 import quillStyles from './postQuill.module.scss';
 
-interface PostData {
-	title: string;
-	shortDescription: string;
-	rating: number;
-	author: {
-		id: number;
-		username: string;
-	};
-	postContent: {
-		content: string;
-	};
-	categories: Array<{ category: { name: string } }>;
-	createdAt: string;
-}
-
 function BlogPost() {
 	const { id } = useParams();
+	const postId = id ? +id : -1;
+
 	const { data, isLoading } = useQuery<PostData>({
 		queryFn: async () => {
-			return (await axios.get(`post/${id}`)).data;
+			return (await axios.get(`post/${postId}`)).data;
 		},
-		queryKey: ['post', { id: id }],
+		queryKey: ['post', postId],
 	});
 
-	if (!data || isLoading) {
+	useEffect(() => console.log(data), [data]);
+
+	const { upvoteFn, downvoteFn } = useVoteChange(postId, data, 'post');
+
+	if (isLoading) {
 		return <p>isLoading...</p>;
+	}
+	if (!data) {
+		return 'not found';
 	}
 	return (
 		<>
@@ -46,7 +45,8 @@ function BlogPost() {
 				<p className={styles.title__text}>{data.title}</p>
 				<div className={styles.title__author}>
 					<UserBar
-						id={data.author.id}
+						id={data.authorId}
+						avatar={getImageURL(data.author.avatar)}
 						type="secondary"
 						username={data.author.username}
 					/>
@@ -54,6 +54,14 @@ function BlogPost() {
 						{getRelativeTime(toLocalTime(data.createdAt))}
 					</span>
 				</div>
+				{data.previewImageCover && (
+					<div className="title__cover">
+						<img
+							src={`${CDN}${getImageURL(data.previewImageCover)}`}
+							alt={`post ${data.title}`}
+						/>
+					</div>
+				)}
 			</div>
 			<div className={styles.content}>
 				<ReactQuill
@@ -66,8 +74,15 @@ function BlogPost() {
 				/>
 			</div>
 			<div className={styles.buttons}>
-				<PostStats rating={data.rating} commentCount={172} />
+				<PostStats
+					status={data.status}
+					upvoteFn={upvoteFn}
+					downvoteFn={downvoteFn}
+					rating={data.rating}
+					commentCount={172}
+				/>
 			</div>
+			<Comments key={'initComments'} isInit />
 		</>
 	);
 }

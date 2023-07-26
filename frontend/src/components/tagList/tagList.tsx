@@ -11,8 +11,8 @@ interface TagListProps {
 function TagList({ tags }: TagListProps) {
 	return (
 		<div className={styles.list}>
-			{tags.map((tag) => (
-				<PostTag name={tag.category.name} />
+			{tags.map((tag, ind) => (
+				<PostTag key={`tag${ind}`} name={tag.category.name} />
 			))}
 		</div>
 	);

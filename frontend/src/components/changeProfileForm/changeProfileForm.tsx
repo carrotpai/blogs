@@ -1,23 +1,17 @@
-import React, { RefObject, useCallback, useRef } from 'react';
+import React, { RefObject, useCallback, useEffect, useRef } from 'react';
 import { Divider, Typography, TypographyProps, styled } from '@mui/material';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { useUserStore } from '../../store/store';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 import ImageCropInput from '../imageCropInput/imageCropInput';
 import TextField from '../textField/responsiveTextField';
+import { useUserStore } from '../../store/store';
 import { axiosPrivate } from '../../api/axios';
+import schema from './validationScheme';
+import { ProfileFormData } from '../../types/types';
 
 import styles from './changeProfileForm.module.scss';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-
-interface ProfileFormData {
-	username: string;
-	info?: string;
-	description?: string;
-	password?: string;
-	newPassword?: string;
-	newPasswordRepeat?: string;
-}
 
 type ImageCropInputRef = {
 	canvasRef: RefObject<HTMLCanvasElement>;
@@ -32,7 +26,14 @@ const ModalTypography = styled(Typography)<TypographyProps>(({ theme }) => ({
 }));
 
 function ChangeProfileForm() {
+	const imageCropInputRef = useRef<ImageCropInputRef>(null);
+
 	const user = useUserStore((state) => state.user);
+
+	useEffect(() => {
+		console.log(user);
+	}, [user]);
+
 	const queryClient = useQueryClient();
 	const { mutate } = useMutation({
 		mutationFn: async (formData: FormData) => {
@@ -47,20 +48,20 @@ function ChangeProfileForm() {
 		},
 	});
 
-	const imageCropInputRef = useRef<ImageCropInputRef>(null);
 	const {
 		handleSubmit,
 		control,
 		formState: { errors },
-	} = useForm<ProfileFormData>({
+	} = useForm<Partial<ProfileFormData>>({
 		defaultValues: {
-			username: user ? user.username : '',
-			info: user ? user.info : '',
-			description: user ? user.description : '',
+			username: user?.username ? user.username : '',
+			info: user?.info ? user.info : '',
+			description: user?.description ? user.description : '',
 			password: '',
 			newPassword: '',
 			newPasswordRepeat: '',
 		},
+		resolver: yupResolver(schema),
 	});
 
 	const getImageCrop = useCallback(
@@ -81,10 +82,11 @@ function ChangeProfileForm() {
 				}
 			});
 		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[imageCropInputRef.current]
 	);
 
-	const onSubmit: SubmitHandler<ProfileFormData> = async (data) => {
+	const onSubmit: SubmitHandler<Partial<ProfileFormData>> = async (data) => {
 		delete data.newPasswordRepeat;
 		const formData = new FormData();
 		await getImageCrop(formData);
@@ -94,6 +96,7 @@ function ChangeProfileForm() {
 				formData.append(val, inputData);
 			}
 		});
+
 		mutate(formData);
 	};
 	return (
@@ -124,6 +127,8 @@ function ChangeProfileForm() {
 										id="username"
 										variant="outlined"
 										label="Username"
+										error={!!errors.username}
+										helperText={errors.username?.message}
 										{...field}
 									/>
 								)}
@@ -188,6 +193,8 @@ function ChangeProfileForm() {
 										variant="outlined"
 										label="Password"
 										sx={{ width: '280px' }}
+										error={!!errors.password}
+										helperText={errors.password?.message}
 										{...field}
 									/>
 								)}
@@ -207,6 +214,10 @@ function ChangeProfileForm() {
 											variant="outlined"
 											label="New password"
 											sx={{ width: '280px' }}
+											error={!!errors.newPassword}
+											helperText={
+												errors.newPassword?.message
+											}
 											{...field}
 										/>
 									)}
@@ -220,6 +231,11 @@ function ChangeProfileForm() {
 											variant="outlined"
 											label="Repeat new password"
 											sx={{ width: '280px' }}
+											error={!!errors.newPasswordRepeat}
+											helperText={
+												errors.newPasswordRepeat
+													?.message
+											}
 											{...field}
 										/>
 									)}

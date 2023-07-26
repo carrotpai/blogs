@@ -16,3 +16,30 @@ export interface ISigninTokens {
 	accessToken: string;
 	refreshToken: string;
 }
+
+export type ProfileFormData = {
+	username: string;
+	info: string;
+	description: string;
+	password: string;
+	newPassword: string;
+	newPasswordRepeat: string;
+};
+
+export interface PostData {
+	previewImageCover?: string;
+	title: string;
+	shortDescription: string;
+	rating: number;
+	authorId: number;
+	author: {
+		username: string;
+		avatar?: string;
+	};
+	postContent: {
+		content: string;
+	};
+	categories: Array<{ category: { name: string } }>;
+	createdAt: string;
+	status?: number;
+}

@@ -17,9 +17,20 @@ const routes = createRoutesFromElements(
 		<Route element={<PagesLayout />}>
 			<Route index element={<MainPage />} />
 			<Route path="blogs" element={<BlogsPage />} />
-			<Route path="blog/:id" element={<BlogPage />} />
+			<Route path="blog/:id" element={<BlogPage />}>
+				{/* модалка */}
+				<Route
+					path="auth"
+					element={
+						<Modal isModalOpened>
+							<p>Must be logged in</p>
+						</Modal>
+					}
+				/>
+			</Route>
 			<Route path="createPost" element={<CreatePostPage />} />
 			<Route path="user/:id" element={<UserPage />}>
+				{/* модалка */}
 				<Route
 					path="change"
 					element={
@@ -38,9 +49,9 @@ const routes = createRoutesFromElements(
 );
 
 export const modalsRoutes = createRoutesFromElements(
-	<Route>
+	<Route path="/">
 		<Route
-			path="/user/:id"
+			path="user/:id"
 			element={
 				<Modal isModalOpened>
 					<p>Modal With User</p>

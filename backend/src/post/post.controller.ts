@@ -7,12 +7,15 @@ import {
   ParseFilePipe,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
-  ValidationPipe,
+  Request,
 } from '@nestjs/common';
 import { CreatePostDTO } from './dtos/createPostDto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PostService } from './post.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RequestWithUser } from 'src/types/types';
 
 @Controller('post')
 export class PostController {
@@ -23,10 +26,30 @@ export class PostController {
     return this.postService.getPost(+postId);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Post('upvote/:id')
+  upvotePost(
+    @Request() { user }: RequestWithUser,
+    @Param('id') postId: number,
+  ) {
+    return this.postService.upvote(user.id, postId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('downvote/:id')
+  downvotePost(
+    @Request() { user }: RequestWithUser,
+    @Param('id') postId: number,
+  ) {
+    return this.postService.downvote(user.id, postId);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post()
   @UseInterceptors(FileInterceptor('cover'))
   createPost(
-    @Body(new ValidationPipe({ transform: true })) createPostDto: CreatePostDTO,
+    @Request() { user }: RequestWithUser,
+    @Body() createPostDto: CreatePostDTO,
     @UploadedFile(
       new ParseFilePipe({
         validators: [new FileTypeValidator({ fileType: 'image/*' })],
@@ -35,7 +58,7 @@ export class PostController {
     )
     cover?: Express.Multer.File,
   ) {
-    this.postService.createPost(createPostDto, cover);
+    this.postService.createPost(createPostDto, user.id, cover);
     return 'created';
   }
 }

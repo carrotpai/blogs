@@ -11,6 +11,15 @@
         gap: 24px;
         margin-top: 12px;
     }
+
+    &__cover {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        & img {
+            max-width: 800px;
+        }
+    }
 }
 
 .time {

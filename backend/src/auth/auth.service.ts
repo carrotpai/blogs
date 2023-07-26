@@ -6,6 +6,7 @@ import { UserService } from 'src/user/user.service';
 import { WRONG_USERNAME_OR_PASSWORD_ERROR_MESSAGE } from 'src/utils/errorConstants';
 import { CreateUserDTO } from './dto/createUserDTO';
 import { ISigninTokens } from 'src/types/types';
+import { prisma } from 'prisma/prismaClient';
 
 @Injectable()
 export class AuthService {
@@ -25,6 +26,27 @@ export class AuthService {
       throw new UnauthorizedException(WRONG_USERNAME_OR_PASSWORD_ERROR_MESSAGE);
     }
     return { id: user.id, username: username };
+  }
+
+  async getUser(userId: number) {
+    const user = await this.userService.findOneByIdOrFail(userId);
+    delete user.password;
+    delete user.refreshToken;
+    return user;
+  }
+
+  async createAndUpdateRefreshToken(userId: number) {
+    const token = await this.issueRefreshToken(userId);
+    await this.userService.updateUserRefreshToken(userId, token);
+  }
+
+  async refresh(userId: number) {
+    const [accessToken, refreshToken] = await Promise.all([
+      this.issueAccessToken(userId),
+      this.issueRefreshToken(userId),
+    ]);
+    await this.userService.updateUserRefreshToken(userId, refreshToken);
+    return { accessToken, refreshToken };
   }
 
   async signin(userId: number): Promise<ISigninTokens> {

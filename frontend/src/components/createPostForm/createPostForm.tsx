@@ -7,7 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { object, string, array, number } from 'yup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { axios } from '../../api/axios';
+import { axios, axiosPrivate } from '../../api/axios';
 import TextField from '../textField/responsiveTextField';
 import TagsInput from '../tagsInput/tagsInput';
 import { createPostFormData } from '../../types/types';
@@ -24,7 +24,7 @@ function CreatePostForm() {
 	const queryClient = useQueryClient();
 	const { mutate, isLoading } = useMutation({
 		mutationFn: async (formData: FormData) => {
-			return axios.post('post', formData, {
+			return axiosPrivate.post('post', formData, {
 				headers: {
 					'Content-Type': 'multipart/form-data',
 				},
@@ -64,6 +64,9 @@ function CreatePostForm() {
 	}, [errors]);
 
 	const onSumbit: SubmitHandler<createPostFormData> = async (data) => {
+		const test = JSON.stringify(data.tags);
+		console.log(`json: ${test}`);
+		console.log(`plain decoded: ${JSON.parse(test)}`);
 		const previewBlob = await (await fetch(previewImageSrc)).blob();
 		const formData = new FormData();
 		formData.append('cover', previewBlob);

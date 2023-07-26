@@ -10,3 +10,9 @@ export interface ISigninTokens {
   accessToken: string;
   refreshToken: string;
 }
+
+export interface RequestWithUser {
+  user: {
+    id: number;
+  };
+}

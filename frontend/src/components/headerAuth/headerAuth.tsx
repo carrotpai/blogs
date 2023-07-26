@@ -1,20 +1,25 @@
 import React, { useState } from 'react';
+
 import UserBar from '../userBar/userBar';
 import AuthorizationButton from '../authorizationButton/authorizationButton';
+import { useUserStore } from '../../store/store';
 
 import styles from './headerAuth.module.scss';
 
-import testAvatar from '../../../img/testAvatar.png';
 const testID = 2;
 
 function HeaderAuth() {
-	const [isAuth, setIsAuth] = useState(false);
+	const user = useUserStore((state) => state.user);
+	const [isAuth, setIsAuth] = useState(Boolean(user));
+	if (!user) {
+		return <div>Not Logged in</div>;
+	}
 	return (
 		<div className={styles.content}>
 			<UserBar
-				id={testID}
-				avatar={testAvatar}
-				username="Jason Francisco"
+				id={user.id}
+				avatar={user.avatar}
+				username={user.username}
 			/>
 			<AuthorizationButton isAuth={isAuth} />
 		</div>

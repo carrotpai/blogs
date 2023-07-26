@@ -11,17 +11,29 @@ datasource db {
 }
 
 model User {
-  id           Int       @id @default(autoincrement())
-  username     String    @unique
-  password     String
-  rating       Int       @default(0)
-  info         String?
-  description  String?
-  refreshToken String?
-  avatar       String?
-  role         Role      @default(USER)
-  posts        Post[]
-  comments     Comment[]
+  id                Int                 @id @default(autoincrement())
+  username          String              @unique
+  password          String
+  rating            Int                 @default(0)
+  info              String?
+  description       String?
+  refreshToken      String?
+  avatar            String?
+  role              Role                @default(USER)
+  posts             Post[]
+  comments          Comment[]
+  userLikedPosts    UserLikedPosts[]
+  userLikedComments UserLikedComments[]
+}
+
+model UserLikedPosts {
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId Int
+  status Int  @default(0)
+
+  @@id([userId, postId])
 }
 
 model Post {
@@ -30,13 +42,14 @@ model Post {
   shortDescription  String
   previewImageCover String
   comments          Comment[]
-  author            User               @relation(fields: [authorId], references: [id])
+  author            User               @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId          Int
   postContent       PostContent        @relation(fields: [postContentId], references: [id])
   postContentId     Int                @unique
   categories        CategoriesOnPost[]
   rating            Int                @default(0)
   createdAt         DateTime           @default(now())
+  userLikedPosts    UserLikedPosts[]
 }
 
 model PostContent {
@@ -48,8 +61,8 @@ model PostContent {
 model CategoriesOnPost {
   postId     Int
   categoryId Int
-  post       Post     @relation(fields: [postId], references: [id])
-  category   Category @relation(fields: [categoryId], references: [id])
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   @@id([postId, categoryId])
 }
@@ -60,12 +73,26 @@ model Category {
   CategoriesOnPost CategoriesOnPost[]
 }
 
+model UserLikedComments {
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId Int
+  status    Int     @default(0)
+
+  @@id([userId, commentId])
+}
+
 model Comment {
-  id       Int  @id @default(autoincrement())
-  post     Post @relation(fields: [postId], references: [id])
-  user     User @relation(fields: [authorId], references: [id])
-  postId   Int
-  authorId Int
+  id                Int                 @id @default(autoincrement())
+  text              String
+  post              Post                @relation(fields: [postId], references: [id])
+  user              User                @relation(fields: [authorId], references: [id])
+  rating            Int                 @default(0)
+  createdAt         DateTime            @default(now())
+  postId            Int
+  authorId          Int
+  userLikedComments UserLikedComments[]
 }
 
 enum Role {

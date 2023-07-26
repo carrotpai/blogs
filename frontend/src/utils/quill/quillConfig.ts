@@ -5,13 +5,37 @@ FontAttributor.whitelist = ['WorkSans'];
 Quill.register(FontAttributor, true);
 
 const Size = Quill.import('attributors/style/size');
-Size.whitelist = ['12px', '14px', '16px', '18px', '24px', '28px', '32px'];
+Size.whitelist = [
+	'12px',
+	'14px',
+	'16px',
+	'18px',
+	'20px',
+	'22px',
+	'24px',
+	'28px',
+	'32px',
+];
 Quill.register(Size, true);
 
 export const modules = {
 	toolbar: [
 		[{ header: '1' }, { header: '2' }, { font: ['WorkSans'] }],
-		[{ size: ['12px', '14px', '16px', '18px', '24px', '28px', '32px'] }],
+		[
+			{
+				size: [
+					'12px',
+					'14px',
+					'16px',
+					'18px',
+					'20px',
+					'22px',
+					'24px',
+					'28px',
+					'32px',
+				],
+			},
+		],
 		['bold', 'italic', 'underline', 'strike', 'blockquote'],
 		[{ list: 'ordered' }, { list: 'bullet' }],
 		['link', 'image'],

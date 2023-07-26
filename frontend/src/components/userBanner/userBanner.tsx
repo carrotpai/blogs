@@ -9,11 +9,14 @@ import { axios } from '../../api/axios';
 
 import testAvatar from '../../../img/testAvatar.png';
 import styles from './userBanner.module.scss';
+import { CDN } from '../../constants/cdn';
+import { Avatar } from '@mui/material';
 
 interface UserInfo {
 	username: string;
 	info?: string;
 	description?: string;
+	avatar?: string;
 	stats: {
 		rating: number | string;
 		posts?: number | string;
@@ -59,11 +62,10 @@ function UserBanner() {
 		<div className={styles.banner}>
 			<div className={styles.left}>
 				<div className={styles.user}>
-					<img
-						src={testAvatar}
+					<Avatar
+						src={`${CDN}${data?.avatar}`}
 						alt={`${data?.username} avatar`}
-						width={64}
-						height={64}
+						sx={{ width: '64px', height: '64px' }}
 					/>
 					<div className="user__text">
 						<p className={styles.user__username}>

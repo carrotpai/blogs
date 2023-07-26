@@ -1,16 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Outlet, matchRoutes, renderMatches, useLocation } from 'react-router';
 
 import routes, { modalsRoutes } from '../router/routes';
 import styles from './rootLayout.module.scss';
-import Modal from '../../components/modal/modal';
 import {
 	renderBackgroundPage,
 	renderModal,
 } from '../router/modalRenderingUtils';
+import { useUserStore } from '../../store/store';
 
 function RootLayout() {
 	const location = useLocation();
+	const getUserAuthData = useUserStore((state) => state.getUser);
+
+	useEffect(() => {
+		getUserAuthData();
+	}, []);
 
 	if (location.state?.background) {
 		const backgroundPage = renderBackgroundPage(
