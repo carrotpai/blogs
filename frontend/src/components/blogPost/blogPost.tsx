@@ -79,7 +79,7 @@ function BlogPost() {
 					upvoteFn={upvoteFn}
 					downvoteFn={downvoteFn}
 					rating={data.rating}
-					commentCount={172}
+					commentCount={100}
 				/>
 			</div>
 			<Comments key={'initComments'} isInit />
