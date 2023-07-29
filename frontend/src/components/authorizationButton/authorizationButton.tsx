@@ -6,22 +6,23 @@ import loginIcon from '../../../img/login.svg';
 import logoutIcon from '../../../img/logout.svg';
 
 interface AuthStatusProps {
-	isAuth?: boolean;
+	type: 'logout' | 'login';
+	onClick: () => void;
 }
 
-function AuthorizationButton({ isAuth }: AuthStatusProps) {
+function AuthorizationButton({ type, onClick }: AuthStatusProps) {
 	return (
-		<div className={styles.content}>
+		<button className={styles.content} onClick={onClick}>
 			<p className={styles.content__text}>
-				{isAuth ? 'Logout' : 'Login'}
+				{{ login: 'Login', logout: 'Logout' }[type]}
 			</p>
 			<img
-				src={isAuth ? loginIcon : logoutIcon}
+				src={{ login: loginIcon, logout: logoutIcon }[type]}
 				alt="login logout icon"
 				width={30}
 				height={30}
 			/>
-		</div>
+		</button>
 	);
 }
 

@@ -1,13 +1,33 @@
-import { MenuItem, TextField } from '@mui/material';
+import {
+	FormControl,
+	FormHelperText,
+	InputLabel,
+	MenuItem,
+	OutlinedInput,
+	Select,
+	SelectChangeEvent,
+	TextField,
+} from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import React, { useRef, useState } from 'react';
-import { type UseFormSetValue } from 'react-hook-form';
-import { produce } from 'immer';
 
 import { axios } from '../../api/axios';
 
 import styles from './tagsInput.module.scss';
 import PostTag from '../postTag/postTag';
+import { produce } from 'immer';
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+
+const MenuProps = {
+	PaperProps: {
+		style: {
+			maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+			width: 250,
+		},
+	},
+};
 
 interface Tag {
 	id: number;
@@ -23,16 +43,14 @@ interface TagsStatus {
 }
 
 interface TagsInputProps {
-	setValueFn: UseFormSetValue<any>;
 	error?: boolean | undefined;
 	helperText?: React.ReactNode;
 }
 
 const TagsInput = React.forwardRef<HTMLInputElement, TagsInputProps>(function (
-	{ setValueFn, error, helperText },
+	{ error, helperText },
 	ref
 ) {
-	//теги + id выбранных тегов
 	const [tags, setTags] = useState<Tag[]>([]);
 	const [tagsId, setTagsId] = useState<number[]>([]);
 
@@ -51,61 +69,83 @@ const TagsInput = React.forwardRef<HTMLInputElement, TagsInputProps>(function (
 		},
 	});
 
-	const handleSelectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const tagId = +e.target.value;
-		const tagName = tagsData[tagId];
-		//если тег был уже добавлен, ничего не делать
-		if (tagsStatus[tagId]) {
+	const handleSelectChange = (e: SelectChangeEvent<number[]>) => {
+		const { value: newValues } = e.target;
+		if (typeof newValues === 'string') {
 			return;
 		}
-		//отметить тег как добавленный
-		tagsStatus[tagId] = true;
+		//флаг показывающий что произошло удаление тега с помощью меню селекта
+		const isDeleted = tagsId.length > newValues.length;
+		if (isDeleted) {
+			//удаленный элемент может быть только 1
+			const [deletedId] = tagsId.filter(
+				(id) => !newValues.find((value) => value === id)
+			);
+			deleteTag(deletedId);
+			return;
+		}
 
-		//обновить стейт
+		let newTag: Tag;
+		let newTagId: number;
+
+		//в цикле ищем новый добавленый тег (он может быть только 1)
+		newValues.forEach((val) => {
+			const tagId = val;
+			const tagName = tagsData[tagId];
+			//если тег был уже добавлен, ничего не делать
+			if (tagsStatus[tagId]) {
+				return;
+			}
+			//отметить тег как добавленный
+			tagsStatus[tagId] = true;
+			newTag = { id: tagId, name: tagName };
+			newTagId = tagId;
+		});
+
 		setTags(
-			produce<Tag[]>((tags) => {
-				tags.push({ id: tagId, name: tagName });
+			produce((tags) => {
+				tags.push(newTag);
 			})
 		);
-
-		//обновить стейт + изменить стейт react-hooks-form (setValueFn)
-		setTagsId((tagsIds) => {
-			const getNewIds = produce<number[]>((tagsIds) => {
-				tagsIds.push(tagId);
-			});
-			const newTagsIds = getNewIds(tagsIds);
-			setValueFn('tags', newTagsIds, { shouldValidate: true });
-			return newTagsIds;
-		});
+		setTagsId(
+			produce((tagIds) => {
+				tagIds.push(newTagId);
+			})
+		);
 	};
 
 	const deleteTag = (id: number) => {
 		tagsStatus[id] = false;
 		setTags((tags) => tags.filter((item) => item.id !== id));
-		setTagsId((tagsIds) => {
-			const newTagsIds = tagsIds.filter((item) => item !== id);
-			setValueFn('tags', newTagsIds, { shouldValidate: true });
-			return newTagsIds;
-		});
+		setTagsId((tagsIds) => tagsIds.filter((item) => item !== id));
 	};
 	return (
 		<div>
 			<div className={styles.selectWrapper}>
-				<TextField
-					select
-					label="choose tags"
-					onChange={handleSelectChange}
-					defaultValue={''}
-					fullWidth
-					error={error}
-					helperText={helperText}
-				>
-					{data.map((item) => (
-						<MenuItem key={`menuItem${item.id}`} value={item.id}>
-							{item.name}
-						</MenuItem>
-					))}
-				</TextField>
+				<FormControl error={error} fullWidth>
+					<InputLabel id="select-tags">choose tags</InputLabel>
+					<Select
+						ref={ref}
+						id="tags"
+						multiple
+						autoComplete="off"
+						labelId="select-tags"
+						onChange={handleSelectChange}
+						input={<OutlinedInput label="choose tags" />}
+						MenuProps={MenuProps}
+						value={tagsId}
+					>
+						{data.map((item) => (
+							<MenuItem
+								key={`menuItem${item.id}`}
+								value={item.id}
+							>
+								{item.name}
+							</MenuItem>
+						))}
+					</Select>
+					{error && <FormHelperText>{helperText}</FormHelperText>}
+				</FormControl>
 			</div>
 			<div className={styles.tags}>
 				{tags.map((tag) => (
@@ -118,7 +158,6 @@ const TagsInput = React.forwardRef<HTMLInputElement, TagsInputProps>(function (
 					/>
 				))}
 			</div>
-			<input hidden ref={ref} />
 		</div>
 	);
 });

@@ -1,0 +1,29 @@
+@use "../../utils/fonts/fonts.scss";
+
+.form {
+    margin-top: 40px;
+    width: 700px;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.buttons {
+    margin-top: 12px;
+    gap: 16px;
+    display: flex;
+    flex-direction: row-reverse;
+
+    &__comment,
+    &__cancel {
+        @include fonts.workSansRegular(16px, 1.4);
+        border: none;
+        cursor: pointer;
+        border-radius: 12px;
+        padding: 8px 20px;
+        color: var(--text-color-dark-light);
+        background-color: #e6eaec;
+        &:hover {
+            opacity: 0.7;
+        }
+    }
+}

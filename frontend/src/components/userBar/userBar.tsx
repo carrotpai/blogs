@@ -21,18 +21,13 @@ function UserBar({
 	type = 'default',
 	time,
 }: UserBarProps) {
+	const navigate = useNavigate();
 	const getText = () => {
 		if (type === 'comment') {
 			return (
 				<div className={styles.comment}>
 					<p
-						className={`${styles.content__text} ${
-							{
-								default: styles.content__text_default,
-								secondary: styles.content__text_secondary,
-								comment: styles.content__text_default,
-							}[type]
-						}`}
+						className={`${styles.content__text} ${styles.content__text_default}`}
 						onClick={() => navigate(`/user/${id}`)}
 					>
 						{username}
@@ -50,7 +45,6 @@ function UserBar({
 						{
 							default: styles.content__text_default,
 							secondary: styles.content__text_secondary,
-							comment: styles.content__text_default,
 						}[type]
 					}`}
 					onClick={() => navigate(`/user/${id}`)}
@@ -61,7 +55,6 @@ function UserBar({
 		}
 	};
 
-	const navigate = useNavigate();
 	return (
 		<div className={styles.content}>
 			<div

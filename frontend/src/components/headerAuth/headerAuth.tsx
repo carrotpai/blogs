@@ -2,26 +2,38 @@ import React, { useState } from 'react';
 
 import UserBar from '../userBar/userBar';
 import AuthorizationButton from '../authorizationButton/authorizationButton';
-import { useUserStore } from '../../store/store';
+import { useTokenStore, useUserStore } from '../../store/store';
 
 import styles from './headerAuth.module.scss';
-
-const testID = 2;
+import { useNavigate } from 'react-router';
 
 function HeaderAuth() {
-	const user = useUserStore((state) => state.user);
-	const [isAuth, setIsAuth] = useState(Boolean(user));
-	if (!user) {
-		return <div>Not Logged in</div>;
-	}
+	const { user, reset } = useUserStore((state) => state);
+	const resetTokens = useTokenStore((state) => state.reset);
+	const navigate = useNavigate();
+	const authButtonType = user ? 'logout' : 'login';
+	const handleAuthButtonClick = {
+		login: () => {
+			navigate('/login');
+		},
+		logout: () => {
+			reset();
+			resetTokens();
+		},
+	}[authButtonType];
 	return (
 		<div className={styles.content}>
-			<UserBar
-				id={user.id}
-				avatar={user.avatar}
-				username={user.username}
+			{user && (
+				<UserBar
+					id={user.id}
+					avatar={user.avatar}
+					username={user.username}
+				/>
+			)}
+			<AuthorizationButton
+				onClick={handleAuthButtonClick}
+				type={authButtonType}
 			/>
-			<AuthorizationButton isAuth={isAuth} />
 		</div>
 	);
 }

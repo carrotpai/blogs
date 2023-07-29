@@ -2,9 +2,15 @@
 .content {
     display: flex;
     align-items: center;
+    border: none;
+    background: none;
+    cursor: pointer;
     gap: 10px;
     &__text {
         @include fonts.workSansRegular(16px, 1.4);
         color: #262626;
+    }
+    &:hover {
+        opacity: 0.7;
     }
 }

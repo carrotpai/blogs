@@ -92,6 +92,9 @@ model Comment {
   createdAt         DateTime            @default(now())
   postId            Int
   authorId          Int
+  parentCommentId   Int?
+  parentComment     Comment?            @relation("comments", fields: [parentCommentId], references: [id])
+  childrenComments  Comment[]           @relation("comments")
   userLikedComments UserLikedComments[]
 }
 

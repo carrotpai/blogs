@@ -16,6 +16,7 @@ interface User {
 	};
 	signin: (username: string, password: string) => Promise<void>;
 	getUser: () => Promise<void>;
+	reset: () => void;
 }
 
 interface storeTokens {
@@ -24,6 +25,7 @@ interface storeTokens {
 	refreshToken?: string;
 	setTokens: (accessToken: string, refreshToken: string) => void;
 	changeRememberMe: () => void;
+	reset: () => void;
 }
 
 export const useUserStore = create<User>((set) => ({
@@ -57,6 +59,9 @@ export const useUserStore = create<User>((set) => ({
 		const setTokens = useTokenStore.getState().setTokens;
 		setTokens(res.accessToken, res.refreshToken);
 	},
+	reset: () => {
+		set(() => ({ user: undefined }));
+	},
 }));
 
 export const useTokenStore = create<storeTokens>()(
@@ -77,6 +82,14 @@ export const useTokenStore = create<storeTokens>()(
 				set(
 					produce<storeTokens>((state) => {
 						state.rememberMe = !state.rememberMe;
+					})
+				);
+			},
+			reset: () => {
+				set(
+					produce<storeTokens>((state) => {
+						state.accessToken = '';
+						state.refreshToken = '';
 					})
 				);
 			},

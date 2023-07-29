@@ -1,5 +1,6 @@
 @use "../../utils/fonts/fonts.scss";
 .comment {
+    display: block;
     &__content {
         display: flex;
         position: relative;
@@ -8,11 +9,17 @@
 
         &_lastIngPage {
             &::before {
-                margin-bottom: 40px;
+                margin-bottom: 48px;
             }
         }
 
         &_pagEnd {
+            &::after {
+                display: none;
+            }
+        }
+
+        &_noReplies {
             &::after {
                 display: none;
             }
@@ -23,21 +30,6 @@
             content: "";
             border: 0.5px solid #e6eaec;
             left: -18px;
-        }
-
-        &::after {
-            position: absolute;
-            content: "";
-            border: 2px solid transparent;
-            bottom: 12px;
-            left: -18px;
-            height: 36px;
-            width: 40px;
-            border-left-color: #e6eaec;
-            border-bottom-color: #e6eaec;
-            border-bottom-left-radius: 24px;
-            border-top-left-radius: 0px;
-            border-bottom-right-radius: 0px;
         }
     }
 
@@ -53,12 +45,33 @@
     &__children {
         margin-left: 24px;
     }
+
+    &__contentWrapper {
+        padding-bottom: 24px;
+    }
 }
 
 .comment__author {
     position: relative;
     display: block;
     &_nested {
+        display: block;
+        /*  &::before {
+            position: absolute;
+            content: "";
+            border: 2px solid transparent;
+            bottom: 20px;
+            left: -44px;
+            height: 40px;
+            width: 40px;
+            border-left-color: #e6eaec;
+            border-bottom-color: #e6eaec;
+            border-bottom-left-radius: 26px;
+            border-top-left-radius: 0px;
+            border-bottom-right-radius: 0px;
+        } */
+    }
+    &_first {
         display: block;
         &::before {
             position: absolute;
@@ -74,5 +87,35 @@
             border-top-left-radius: 0px;
             border-bottom-right-radius: 0px;
         }
+    }
+}
+
+.interact {
+    margin-top: 16px;
+    align-items: center;
+    display: flex;
+    gap: 28px;
+}
+
+.reply {
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+}
+
+.button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    &:hover {
+        opacity: 0.7;
+    }
+
+    &__text {
+        @include fonts.workSansMedium(16px, 1.5);
+        color: var(--text-color-gray);
     }
 }

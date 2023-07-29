@@ -1,6 +1,7 @@
 @use "../../utils/fonts/fonts.scss";
 
 .postTag {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -13,9 +14,7 @@
     }
 
     &__button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        position: relative;
         background-color: #8198f9;
         cursor: pointer;
         border: none;
@@ -26,35 +25,21 @@
         &:hover {
             opacity: 0.7;
         }
-    }
-}
+        &:before,
+        &:after {
+            position: absolute;
+            left: 8px;
+            top: 15%;
+            width: 2px;
+            height: 70%;
+            border-radius: 0.125em;
+            transform: rotate(45deg);
+            background: #ffffff;
+            content: "";
+        }
 
-.cross {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    background: none;
-    position: relative;
-    width: 14px;
-    height: 14px;
-    &:before,
-    &:after {
-        content: "";
-        position: absolute;
-        top: calc((6px - 2px) / 2);
-        left: 2px;
-        right: 0;
-        height: 10px;
-        width: 2px;
-        background: #ffffff;
-        border-radius: 100px;
-    }
-
-    &:before {
-        transform: rotate(45deg);
-    }
-
-    &:after {
-        transform: rotate(-45deg);
+        &:after {
+            transform: rotate(-45deg);
+        }
     }
 }

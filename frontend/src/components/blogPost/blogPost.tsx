@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router';
@@ -11,28 +11,41 @@ import { getRelativeTime, toLocalTime } from '../../utils/timeUtils/timeUtils';
 import { getImageURL } from '../../utils/images/utils';
 import { CDN } from '../../constants/cdn';
 import Comments from '../comments/comments';
-import { PostData } from '../../types/types';
-import { useVoteChange } from '../../hooks/useVoteChange';
+import { CommentData, PostData } from '../../types/types';
+import { useBlogVoteChange } from '../../hooks/useBlogVoteChange';
 
 import styles from './blogPost.module.scss';
 import quillStyles from './postQuill.module.scss';
 
 function BlogPost() {
+	const [isAllowToFetch, setIsAllowToFetch] = useState(false);
 	const { id } = useParams();
 	const postId = id ? +id : -1;
 
-	const { data, isLoading } = useQuery<PostData>({
+	useEffect(() => {
+		setIsAllowToFetch(true);
+	}, []);
+
+	const { data, isLoading: isPostDataLoading } = useQuery<PostData>({
 		queryFn: async () => {
+			setIsAllowToFetch(false);
 			return (await axios.get(`post/${postId}`)).data;
 		},
 		queryKey: ['post', postId],
+		enabled: isAllowToFetch,
 	});
 
-	useEffect(() => console.log(data), [data]);
+	const commentQueryFn = async (page?: number) => {
+		return (
+			await axios.get<[CommentData[], number]>(
+				`comments/forpost/${postId}`
+			)
+		).data;
+	};
 
-	const { upvoteFn, downvoteFn } = useVoteChange(postId, data, 'post');
+	const { upvoteFn, downvoteFn } = useBlogVoteChange(postId, data);
 
-	if (isLoading) {
+	if (isPostDataLoading) {
 		return <p>isLoading...</p>;
 	}
 	if (!data) {
@@ -82,7 +95,12 @@ function BlogPost() {
 					commentCount={100}
 				/>
 			</div>
-			<Comments key={'initComments'} isInit />
+			<Comments
+				postId={postId}
+				key={'initComments'}
+				isRootComments
+				getComments={commentQueryFn}
+			/>
 		</>
 	);
 }

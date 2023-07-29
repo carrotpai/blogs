@@ -23,6 +23,7 @@
 }
 
 .time {
+    margin-top: 2px;
     @include fonts.workSansRegular(14px, 1.4);
     color: var(--text-color-gray);
 }

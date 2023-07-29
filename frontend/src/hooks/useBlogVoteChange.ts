@@ -5,11 +5,11 @@ import { debounce } from '../utils/debounce';
 import { axiosPrivate } from '../api/axios';
 import { PostData } from '../types/types';
 
-export function useVoteChange(id: number, data: any, type: 'post' | 'comment') {
+export function useBlogVoteChange(id: number, data: any) {
 	const queryClient = useQueryClient();
 	const debouncedQueryInvalidation = useCallback(
 		debounce(10000, () =>
-			queryClient.invalidateQueries({ queryKey: [type, id] })
+			queryClient.invalidateQueries({ queryKey: ['post', id] })
 		),
 		[]
 	);
@@ -22,11 +22,14 @@ export function useVoteChange(id: number, data: any, type: 'post' | 'comment') {
 
 	const { mutate: upvote } = useMutation({
 		mutationFn: () => {
-			return axiosPrivate.post(`${type}/upvote/${id}`);
+			return axiosPrivate.post(`${'post'}/upvote/${id}`);
 		},
 		onMutate: async () => {
-			await queryClient.cancelQueries({ queryKey: [type, id] });
-			const previousData = queryClient.getQueryData<PostData>([type, id]);
+			await queryClient.cancelQueries({ queryKey: ['post', id] });
+			const previousData = queryClient.getQueryData<PostData>([
+				'post',
+				id,
+			]);
 			let currnetRating = (previousData?.rating ?? 0) + 1;
 			let status = 1;
 			if (previousData?.status != null) {
@@ -40,7 +43,7 @@ export function useVoteChange(id: number, data: any, type: 'post' | 'comment') {
 					currnetRating += 1;
 				}
 			}
-			queryClient.setQueryData([type, id], {
+			queryClient.setQueryData(['post', id], {
 				...previousData,
 				rating: currnetRating,
 				status: status,
@@ -52,11 +55,14 @@ export function useVoteChange(id: number, data: any, type: 'post' | 'comment') {
 	});
 	const { mutate: downvote } = useMutation({
 		mutationFn: () => {
-			return axiosPrivate.post(`${type}/downvote/${id}`);
+			return axiosPrivate.post(`${'post'}/downvote/${id}`);
 		},
 		onMutate: async () => {
-			await queryClient.cancelQueries({ queryKey: [type, id] });
-			const previousData = queryClient.getQueryData<PostData>([type, id]);
+			await queryClient.cancelQueries({ queryKey: ['post', id] });
+			const previousData = queryClient.getQueryData<PostData>([
+				'post',
+				id,
+			]);
 			let currnetRating = (previousData?.rating ?? 0) - 1;
 			let status = -1;
 			if (previousData?.status != null) {
@@ -70,7 +76,7 @@ export function useVoteChange(id: number, data: any, type: 'post' | 'comment') {
 					currnetRating -= 1;
 				}
 			}
-			queryClient.setQueryData([type, id], {
+			queryClient.setQueryData(['post', id], {
 				...previousData,
 				rating: currnetRating,
 				status: status,

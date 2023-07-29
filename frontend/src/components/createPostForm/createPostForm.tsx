@@ -164,11 +164,16 @@ function CreatePostForm() {
 				</div>
 				<div className="tags">
 					<p className={styles.text}>Post tags</p>
-					<TagsInput
-						setValueFn={setValue}
-						error={!!errors.tags}
-						helperText={errors.tags?.message}
-						{...register('tags')}
+					<Controller
+						name="tags"
+						control={control}
+						render={({ field }) => (
+							<TagsInput
+								error={!!errors.tags}
+								helperText={errors.tags?.message}
+								{...field}
+							/>
+						)}
 					/>
 				</div>
 				<div className="post">

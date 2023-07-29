@@ -43,3 +43,16 @@ export interface PostData {
 	createdAt: string;
 	status?: number;
 }
+
+export interface CommentData {
+	id: number;
+	user: {
+		id: number;
+		avatar?: string;
+		username: string;
+	};
+	repliesCount: number;
+	createdAt: string;
+	text: string;
+	rating: number;
+}
