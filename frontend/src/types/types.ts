@@ -51,7 +51,6 @@ export interface CommentData {
 		avatar?: string;
 		username: string;
 	};
-	repliesCount: number;
 	createdAt: string;
 	text: string;
 	rating: number;

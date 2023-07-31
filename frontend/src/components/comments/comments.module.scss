@@ -36,6 +36,15 @@
         @include fonts.workSansRegular(14px, 1.5);
         color: var(--text-color-gray);
     }
+
+    &_root {
+        position: relative;
+        left: 2px;
+        bottom: 24px;
+        &::after {
+            display: none;
+        }
+    }
 }
 
 .readMoreButton {
@@ -79,4 +88,17 @@
             display: none;
         }
     }
+}
+
+.loadingText {
+    margin: 0;
+    @include fonts.workSansRegular(14px, 1.5);
+    color: var(--text-color-gray);
+}
+
+.hasNotCommentsText {
+    text-align: center;
+    margin: 24px 0 48px 0;
+    color: var(--text-color-gray);
+    @include fonts.workSansMedium(24px, 1.4);
 }

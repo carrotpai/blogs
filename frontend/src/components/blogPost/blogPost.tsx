@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'react-router';
 
-import { axios } from '../../api/axios';
+import { axios, axiosPrivate } from '../../api/axios';
 import UserBar from '../userBar/userBar';
 import PostStats from '../postStats/postStats';
 import TagList from '../tagList/tagList';
@@ -19,6 +19,7 @@ import quillStyles from './postQuill.module.scss';
 
 function BlogPost() {
 	const [isAllowToFetch, setIsAllowToFetch] = useState(false);
+	const [isUserAddedComment, setIsUserAddedComment] = useState(0);
 	const { id } = useParams();
 	const postId = id ? +id : -1;
 
@@ -35,12 +36,25 @@ function BlogPost() {
 		enabled: isAllowToFetch,
 	});
 
-	const commentQueryFn = async (page?: number) => {
-		return (
-			await axios.get<[CommentData[], number]>(
-				`comments/forpost/${postId}`
-			)
-		).data;
+	const commentQueryFn = async (
+		isUserAddedComment: boolean,
+		page?: number
+	) => {
+		let res: [CommentData[], number, number];
+		if (isUserAddedComment) {
+			res = (
+				await axiosPrivate.get<[CommentData[], number, number]>(
+					`comments/forpost/withuser/${postId}?page=${page}`
+				)
+			).data;
+		} else {
+			res = (
+				await axios.get<[CommentData[], number, number]>(
+					`comments/forpost/${postId}?page=${page}`
+				)
+			).data;
+		}
+		return res;
 	};
 
 	const { upvoteFn, downvoteFn } = useBlogVoteChange(postId, data);
@@ -97,9 +111,13 @@ function BlogPost() {
 			</div>
 			<Comments
 				postId={postId}
-				key={'initComments'}
-				isRootComments
+				key={`initComments-${isUserAddedComment}`}
+				type="root"
 				getComments={commentQueryFn}
+				onCommentAdded={() => {
+					setIsUserAddedComment((count) => count + 1);
+				}}
+				userAddedComments={isUserAddedComment}
 			/>
 		</>
 	);

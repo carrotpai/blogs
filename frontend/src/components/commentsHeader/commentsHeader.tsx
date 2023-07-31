@@ -4,17 +4,30 @@ import CreateCommentForm from '../createCommentForm/createCommentForm';
 
 import plusIcon from '../../assets/plus.svg';
 import styles from './commentsHeader.module.scss';
+import { useQuery } from '@tanstack/react-query';
+import { axios } from '../../api/axios';
 
 interface CommentsHeaderProps {
 	postId: number;
+	onCommentAdded: () => void;
 }
 
-function CommentsHeader({ postId }: CommentsHeaderProps) {
+function CommentsHeader({ postId, onCommentAdded }: CommentsHeaderProps) {
+	const { data: totalComments } = useQuery<number>({
+		queryFn: async () => {
+			return (await axios.get(`comments/count/all/${postId}`)).data;
+		},
+		queryKey: ['postCommentsCount'],
+		staleTime: 60 * 1000 * 15,
+	});
+
 	const [isFormActive, setIsFormActive] = useState(false);
 	return (
 		<div className={styles.header}>
 			<div className={styles.header__separator}>
-				<p className={styles.header__count}>{`${162} comments`}</p>
+				<p
+					className={styles.header__count}
+				>{`${totalComments} comments`}</p>
 			</div>
 			<div className={styles.panel}>
 				<div className={styles.filter}>
@@ -37,7 +50,7 @@ function CommentsHeader({ postId }: CommentsHeaderProps) {
 					<button
 						className={styles.addCommentButton}
 						type="button"
-						onClick={() => setIsFormActive(!isFormActive)}
+						onClick={() => setIsFormActive(true)}
 					>
 						<img
 							className="plusIcon"
@@ -52,9 +65,15 @@ function CommentsHeader({ postId }: CommentsHeaderProps) {
 			</div>
 			{isFormActive && (
 				<CreateCommentForm
+					onClose={() => {
+						setIsFormActive(false);
+					}}
+					formStatus={isFormActive}
 					postId={postId}
-					type="comment"
-					onClose={() => setIsFormActive(false)}
+					type="root"
+					onEntryAdded={() => {
+						onCommentAdded();
+					}}
 				/>
 			)}
 		</div>

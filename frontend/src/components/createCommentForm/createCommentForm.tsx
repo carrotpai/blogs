@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import CommentTextField from '../commentTextField/commentTextField';
 
@@ -6,32 +6,47 @@ import styles from './createCommentForm.module.scss';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useUserStore } from '../../store/store';
-import { useLocation, useNavigate, useParams } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { axiosPrivate } from '../../api/axios';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { CircularProgress } from '@mui/material';
+import { sleep } from '../../utils/sleep';
 
-interface CreateCommentFormProps {
+type CreateCommentFormPropsDefault = {
 	onClose: () => void;
 	postId: number;
 	currentPage?: number;
-	parentCommentId?: number;
-	type: 'comment' | 'reply';
-}
+	onEntryAdded: () => void;
+	formStatus?: boolean;
+};
+
+type ConditionalCreateCommentFormProps =
+	| { type: 'root'; parentCommentId?: never }
+	| {
+			type: 'reply';
+			parentCommentId: number;
+	  };
 
 interface CommentFormData {
 	text: string;
 }
 
-function CreateCommentForm({
-	onClose,
-	type = 'comment',
-	postId,
-	currentPage,
-	parentCommentId,
-}: CreateCommentFormProps) {
+type CreateCommentFormProps = CreateCommentFormPropsDefault &
+	ConditionalCreateCommentFormProps;
+
+function CreateCommentForm(props: CreateCommentFormProps) {
+	const {
+		onEntryAdded,
+		type = 'root',
+		postId,
+		parentCommentId,
+		onClose,
+	} = props;
+
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
+
 	const user = useUserStore((state) => state.user);
 	const queryClient = useQueryClient();
 
@@ -46,20 +61,11 @@ function CreateCommentForm({
 		}
 	}, []);
 
-	const getQueryKey = (): (string | number)[] => {
-		let key;
-		if (type === 'comment') key = ['notNestedComment', postId];
-		else {
-			key = ['nestedComment', parentCommentId ?? -1];
-		}
-		return key;
-	};
-
-	const { mutate: createNewComment } = useMutation({
+	const { mutate: createNewComment, isLoading } = useMutation({
 		mutationFn: async (commentText: string) => {
-			return axiosPrivate.post(
+			return axiosPrivate.post<{ commentId: number }>(
 				{
-					comment: `comments/create/forpost/${postId}`,
+					root: `comments/create/forpost/${postId}`,
 					reply: `comments/create/forcomment/${parentCommentId}?postId=${postId}`,
 				}[type],
 				{
@@ -68,7 +74,17 @@ function CreateCommentForm({
 			);
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: getQueryKey() });
+			const totalCommentCount = queryClient.getQueryData<number>([
+				'postCommentsCount',
+			]);
+			queryClient.setQueryData(
+				['postCommentsCount'],
+				totalCommentCount ? totalCommentCount + 1 : 1
+			);
+			//отобразить вложенные комментарии вместе с новым созданным (работает только для реплаев)
+			if (onEntryAdded) {
+				onEntryAdded();
+			}
 		},
 	});
 
@@ -80,6 +96,7 @@ function CreateCommentForm({
 		handleSubmit,
 		control,
 		formState: { errors },
+		reset,
 	} = useForm<CommentFormData>({
 		defaultValues: { text: '' },
 		resolver: yupResolver(schema),
@@ -87,6 +104,7 @@ function CreateCommentForm({
 
 	const onSubmit: SubmitHandler<CommentFormData> = (data) => {
 		createNewComment(data.text);
+		reset();
 	};
 
 	return (
@@ -101,9 +119,7 @@ function CreateCommentForm({
 				render={({ field }) => (
 					<CommentTextField
 						label={
-							{ comment: 'Your comment', reply: 'Your reply' }[
-								type
-							]
+							{ root: 'Your comment', reply: 'Your reply' }[type]
 						}
 						multiline
 						minRows={3}
@@ -120,7 +136,9 @@ function CreateCommentForm({
 				<button
 					className={styles.buttons__cancel}
 					type="button"
-					onClick={() => onClose()}
+					onClick={() => {
+						onClose();
+					}}
 				>
 					cancel
 				</button>

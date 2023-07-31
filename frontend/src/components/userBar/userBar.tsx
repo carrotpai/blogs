@@ -6,13 +6,15 @@ import { useNavigate } from 'react-router';
 import { CDN } from '../../constants/cdn';
 import { getRelativeTime, toLocalTime } from '../../utils/timeUtils/timeUtils';
 
-interface UserBarProps {
+type UserBarProps = {
 	id: number;
 	avatar?: string;
 	username: string;
-	type?: 'default' | 'secondary' | 'comment';
-	time?: string;
-}
+} & ConditionalUserBarProps;
+
+type ConditionalUserBarProps =
+	| { type: 'default' | 'secondary'; time?: never }
+	| { type: 'comment'; time: string };
 
 function UserBar({
 	avatar,

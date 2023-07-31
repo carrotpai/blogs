@@ -12,18 +12,31 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RequestWithUser } from 'src/types/types';
 import { CreateCommentDTO } from './dtos/createCommentDTO';
 import { CommentService } from './comment.service';
+import { sleep } from 'src/utils/sleep';
+import { CommentVoteService } from './commentVote.service';
 
 @Controller('comments')
 export class CommentController {
-  constructor(private readonly commentService: CommentService) {}
+  constructor(
+    private readonly commentService: CommentService,
+    private readonly commentVoteService: CommentVoteService,
+  ) {}
   @Get('forpost/:id')
-  getCommenstForPost(@Param('id') postId: number) {
-    return this.commentService.getNotNestedComments(postId);
+  async getCommenstForPost(
+    @Param('id') postId: number,
+    @Query('page') page: number,
+  ) {
+    await sleep(5000);
+    return this.commentService.getNotNestedComments(postId, page);
   }
 
   @Get('forcomment/:id')
-  getNestedComments(@Param('id') commentId: number) {
-    return this.commentService.getNestedComments(commentId);
+  async getNestedComments(
+    @Param('id') commentId: number,
+    @Query('page') page: number,
+  ) {
+    await sleep(5000);
+    return this.commentService.getNestedComments(commentId, page);
   }
 
   @Get('count/forpost/:id')
@@ -69,5 +82,49 @@ export class CommentController {
       user.id,
       createCommentDto,
     );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('forcomment/withuser/:id')
+  async getNestedCommentsForCommentAndUser(
+    @Request() { user }: RequestWithUser,
+    @Param('id') commentId: number,
+    @Query('page') page: number,
+  ) {
+    await sleep(5000);
+    return this.commentService.getNestedCommentsForUser(
+      user.id,
+      commentId,
+      page,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('forpost/withuser/:id')
+  async getRootCommentsForPostAndUser(
+    @Request() { user }: RequestWithUser,
+    @Param('id') postId: number,
+    @Query('page') page: number,
+  ) {
+    await sleep(5000);
+    return this.commentService.getRootCommentsForUser(user.id, postId, page);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/upvote/:id')
+  async upvoteComment(
+    @Request() { user }: RequestWithUser,
+    @Param('id') commentId: number,
+  ) {
+    return this.commentVoteService.upvote(user.id, commentId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/upvote/:id')
+  async downvoteComment(
+    @Request() { user }: RequestWithUser,
+    @Param('id') commentId: number,
+  ) {
+    return this.commentVoteService.downvote(user.id, commentId);
   }
 }

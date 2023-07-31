@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import UserBar from '../userBar/userBar';
 import VoteCount from '../voteCount/voteCount';
@@ -8,46 +8,57 @@ import commentIcon from '../../assets/comment.svg';
 import editIcon from '../../assets/edit.svg';
 import styles from './comment.module.scss';
 import CreateCommentForm from '../createCommentForm/createCommentForm';
-import { useQuery } from '@tanstack/react-query';
-import { axios } from '../../api/axios';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { axios, axiosPrivate } from '../../api/axios';
 import { CommentData } from '../../types/types';
 
-interface Comment {
+type CommentProps = {
+	type: 'root' | 'reply';
 	id: number;
 	postId: number;
-	parentCommentId?: number;
 	currentPage?: number;
+
 	user: {
 		id: number;
 		avatar?: string;
 		username: string;
 	};
+
 	createdAt: string;
 	text: string;
 	rating: number;
+
 	isFirst?: boolean;
-	isNested?: boolean;
 	isLastCommentInPage?: boolean;
 	isPaginationEnded?: boolean;
-}
+};
 
 function Comment({
+	type,
 	id,
-	parentCommentId,
 	postId,
 	user,
 	text,
 	rating,
 	createdAt,
 	isFirst,
-	isNested,
 	isLastCommentInPage,
 	isPaginationEnded,
-}: Comment) {
+}: CommentProps) {
+	const [startChildrenFetch, setStartChildrenFetch] = useState(false);
 	const [isFormOpen, setIsFormOpen] = useState(false);
+	const [userAddedReplies, setUserAddedReplies] = useState(0);
+
+	const queryClient = useQueryClient();
+
 	const { data: repliesCount, isLoading } = useQuery({
 		queryFn: async () => {
-			return (await axios.get(`comments/count/forcomment/${id}`)).data;
+			const data = (await axios.get(`comments/count/forcomment/${id}`))
+				.data;
+			if (!data) {
+				setStartChildrenFetch(false);
+			}
+			return data;
 		},
 		queryKey: ['repliesCount', id],
 		staleTime: 60 * 1000,
@@ -55,10 +66,8 @@ function Comment({
 
 	const authorStyles = () => {
 		let style: string = styles.comment__author;
-		if (isNested) {
-			style = style.concat(
-				` ${isNested && styles.comment__author_nested}`
-			);
+		if (type === 'reply') {
+			style = style.concat(` ${styles.comment__author_nested}`);
 			if (isFirst) {
 				style = style.concat(` ${styles.comment__author_first}`);
 			}
@@ -80,12 +89,25 @@ function Comment({
 		return style;
 	};
 
-	const commentQueryFn = async (page?: number) => {
-		return (
-			await axios.get<[CommentData[], number]>(
-				`comments/forcomment/${id}`
-			)
-		).data;
+	const commentQueryFn = async (
+		isUserAddedComment: boolean,
+		page?: number
+	) => {
+		let res: [CommentData[], number, number];
+		if (isUserAddedComment) {
+			res = (
+				await axiosPrivate.get<[CommentData[], number, number]>(
+					`comments/forcomment/withuser/${id}?page=${page}`
+				)
+			).data;
+		} else {
+			res = (
+				await axios.get<[CommentData[], number, number]>(
+					`comments/forcomment/${id}?page=${page}`
+				)
+			).data;
+		}
+		return res;
 	};
 
 	return (
@@ -110,7 +132,7 @@ function Comment({
 							<button
 								className={styles.button}
 								type="button"
-								onClick={() => setIsFormOpen(true)}
+								onClick={() => setIsFormOpen((state) => !state)}
 							>
 								<img src={commentIcon} alt="comment icon" />
 								<span className={styles.button__text}>
@@ -130,10 +152,21 @@ function Comment({
 					<div className="form">
 						{isFormOpen && (
 							<CreateCommentForm
+								onClose={() => {
+									setIsFormOpen(false);
+								}}
+								formStatus={isFormOpen}
 								parentCommentId={id}
 								postId={postId}
 								type="reply"
-								onClose={() => setIsFormOpen(false)}
+								onEntryAdded={() => {
+									setStartChildrenFetch(true);
+									setUserAddedReplies((count) => count + 1);
+									queryClient.invalidateQueries([
+										'repliesCount',
+										id,
+									]);
+								}}
 							/>
 						)}
 					</div>
@@ -142,9 +175,11 @@ function Comment({
 							getComments={commentQueryFn}
 							parentCommentId={id}
 							postId={postId}
-							isNested={true}
+							type="reply"
 							key={`comments-${id}-rep-${repliesCount}`}
 							totalComments={repliesCount}
+							startFetch={startChildrenFetch}
+							userAddedComments={userAddedReplies}
 						/>
 					</div>
 				</div>

@@ -25,6 +25,7 @@ function HeaderAuth() {
 		<div className={styles.content}>
 			{user && (
 				<UserBar
+					type="default"
 					id={user.id}
 					avatar={user.avatar}
 					username={user.username}

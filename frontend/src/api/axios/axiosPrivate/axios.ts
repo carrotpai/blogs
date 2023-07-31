@@ -37,19 +37,26 @@ const axiosPrivate = axios.create({
 
 const refreshTokens = async () => {
 	await storageHydration;
-	const newTokens = (
-		await axiosDefault.post<Tokens>(
-			'auth/refresh',
-			{},
-			{
-				headers: {
-					Authorization: `Bearer ${tokens.refreshToken}`,
-				},
-			}
-		)
-	).data;
-	if (setTokens && newTokens.accessToken && newTokens.refreshToken) {
-		setTokens(newTokens.accessToken, newTokens.refreshToken);
+	try {
+		const newTokens = (
+			await axiosDefault.post<Tokens>(
+				'auth/refresh',
+				{},
+				{
+					headers: {
+						Authorization: `Bearer ${tokens.refreshToken}`,
+					},
+				}
+			)
+		).data;
+		if (setTokens && newTokens.accessToken && newTokens.refreshToken) {
+			setTokens(newTokens.accessToken, newTokens.refreshToken);
+		}
+	} catch (error) {
+		console.log(error);
+		console.log(
+			'TODO: make navigate to login from unsuccessful refresh request'
+		);
 	}
 };
 
